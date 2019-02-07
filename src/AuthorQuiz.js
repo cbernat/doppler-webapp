@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+// eslint-disable-next-line
 import logo from './logo.svg';
 import './App.css';
 import './bootstrap.min.css'
-
+// eslint-disable-next-line
 import HeaderNav from './components/Header/Nav';
 
 function Hero() {
@@ -16,7 +17,7 @@ function Hero() {
   );
 }
 
-function Turn({autor, books}) {
+function Turn({author, books}) {
  return(
  <div className="row turn" style={{backgroundColor: "white"}}>
   <div className="col-4 offset-1">
@@ -44,17 +45,15 @@ function Footer(){
   );
 }
 
-class AuthorQuiz extends Component {
-  render() {
+function AuthorQuiz ({turnData}) {
     return (
       <div className="container-fluid">
         <Hero/>
-        <Turn/>
+        <Turn {...turnData}/>
         <Continue/>
         <Footer />
       </div>
     );
-  }
 }
 
 export default AuthorQuiz;
