@@ -126,18 +126,13 @@ export class HttpDopplerLegacyClient implements DopplerLegacyClient {
 
   public async getUserData() {
     var response = await this.axios.get('/WebApp/GetUserData');
-    if (!response || !response.data || !response.data.nav) {
+    if (!response || !response.data ) {
       throw new Error('Empty Doppler response');
     }
+    if (response.data.error){
+      throw new Error(`Doppler Error: ${response.data.error}`);
+    }
 
-    const { alert, nav, user } = mapHeaderDataJson(response.data);
-
-    return {
-      alert: alert,
-      nav: nav,
-      user: {
-        ...user
-      },
-    };
+    return mapHeaderDataJson(response.data);
   }
 }
