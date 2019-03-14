@@ -79,7 +79,6 @@ describe('Doppler legacy client', () => {
       }
     }));
     const action = async()=>{
-      // Act
       await sut.getUserData();
     };
     // Assert
@@ -90,8 +89,8 @@ describe('Doppler legacy client', () => {
     // Arrange
     const sut = new HttpDopplerLegacyClient(axios,'http://localhost:52191');
     axios.get.mockImplementation(()=>{});
+    // Act
     const action = async()=>{
-      // Act
       await sut.getUserData();
     };
     // Assert
