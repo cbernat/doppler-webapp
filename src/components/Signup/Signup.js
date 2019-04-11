@@ -73,12 +73,16 @@ export default injectIntl(function({ intl }) {
       errors[fieldNames.email] = _('validation_messages.error_invalid_email_address');
     }
 
-    if (!values[fieldNames.password]) {
-      // TODO: I think that password validation has a different format
-      errors[fieldNames.password] = _('validation_messages.error_required_field');
-    } else {
-      // TODO: validate password
-    }
+    if (!values[fieldNames.password]){
+      errors[fieldNames.password] = { empty : true};  
+    } else if (values[fieldNames.password].length < 8) {
+        errors[fieldNames.password] = { charLength: true };
+        if (!/[0-9]/.test(values[fieldNames.password])) {
+          errors[fieldNames.password] = { charLength: true, digit: true };
+        }
+    } else if (!/[0-9]/.test(values[fieldNames.password])) {
+        errors[fieldNames.password] = { digit: true };
+    }   
 
     if (!values[fieldNames.accept_privacy_policies]) {
       // TODO: show the right message

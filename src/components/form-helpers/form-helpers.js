@@ -52,6 +52,30 @@ export const FieldItem = connect(
   ),
 );
 
+export const CustomItem = connect(
+  ({ className, fieldName, children, formik: { errors, touched } }) => (
+    <li
+      className={concatClasses(className, touched[fieldName] && errors[fieldName] ? 'error' : '')}
+    >
+      {children}
+      {touched[fieldName] && errors[fieldName] && errors[fieldName] ? (
+        <div className="wrapper-password">
+          <p className="password-message">
+            <span className={errors[fieldName].charLength || errors[fieldName].empty ? "lack-message" : "waiting-message"}
+            >8 caracteres como mínimo</span><span className={errors[fieldName].digit || errors[fieldName].empty ? "lack-message" : "waiting-message"}>Un dígito</span>
+          </p>
+        </div>
+      ) :  
+        <div className="wrapper-password">
+          <p className="password-message">
+            <span className="waiting-message">8 caracteres como mínimo</span><span className="waiting-message">Un dígito</span>
+          </p>
+        </div>
+      }
+    </li>
+  ),
+);
+
 /**
  * Phone Field Item Component
  * @param { Object } props - props
@@ -139,14 +163,19 @@ export const InputFieldItem = ({ className, fieldName, label, type, placeholder 
   </FieldItem>
 );
 
-export const PasswordFieldItem = ({ className, fieldName, label, placeholder, helpText }) => {
+export const PasswordFieldItem = ({ 
+  className, 
+  fieldName, 
+  label, 
+  placeholder
+    }) => {
   const [passVisible, setPassVisible] = useState(false);
   const type = passVisible ? 'text' : 'password';
   const autocomplete = passVisible ? 'off' : 'current-password';
   const buttonClasses = passVisible ? 'show-hide icon-hide ms-icon' : 'show-hide ms-icon icon-view';
 
   return (
-    <FieldItem className={concatClasses('field-item', className)} fieldName={fieldName}>
+    <CustomItem className={concatClasses('field-item', className)} fieldName={fieldName}>
       <label htmlFor={fieldName}>
         {label}
         <button
@@ -169,7 +198,7 @@ export const PasswordFieldItem = ({ className, fieldName, label, placeholder, he
         badinput="false"
         autoCapitalize="off"
       />
-    </FieldItem>
+    </CustomItem>
   );
 };
 
