@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { connect, Field } from 'formik';
-import { injectIntl } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import countriesEs from '../../i18n/countries-es.json';
 import countriesEn from '../../i18n/countries-en.json';
 import countriesLocalized from '../../i18n/countries-localized.json';
@@ -58,20 +58,15 @@ export const CustomItem = connect(
       className={concatClasses(className, touched[fieldName] && errors[fieldName] ? 'error' : '')}
     >
       {children}
-      {touched[fieldName] && errors[fieldName] && errors[fieldName] ? (
-        <div className="wrapper-password">
-          <p className="password-message">
-            <span className={errors[fieldName].charLength || errors[fieldName].empty ? "lack-message" : "waiting-message"}
-            >8 caracteres como mínimo</span><span className={errors[fieldName].digit || errors[fieldName].empty ? "lack-message" : "waiting-message"}>Un dígito</span>
-          </p>
-        </div>
-      ) :  
-        <div className="wrapper-password">
-          <p className="password-message">
-            <span className="waiting-message">8 caracteres como mínimo</span><span className="waiting-message">Un dígito</span>
-          </p>
-        </div>
-      }
+      <div className="wrapper-password">
+        <p className="password-message">
+          <span 
+          className={touched[fieldName] && errors[fieldName] && (errors[fieldName].charLength || errors[fieldName].empty) ? "lack-message" : "waiting-message"}
+          ><FormattedMessage id="validation_messages.error_password_character_length"/></span><span 
+          className={touched[fieldName] && errors[fieldName] && (errors[fieldName].digit || errors[fieldName].empty) ? "lack-message" : "waiting-message"}
+          ><FormattedMessage id="validation_messages.error_password_digit"/></span>
+        </p>
+      </div>
     </li>
   ),
 );
