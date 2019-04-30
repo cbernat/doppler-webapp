@@ -69,7 +69,11 @@
     "rank_time_item2": "2 weeks",
     "rank_time_item3": "3 weeks",
     "title": "Optimize your Digital Marketing strategy",
-    "verified_domain": "Verified domain"
+    "verified_domain": "Verified domain",
+    "week": {
+      "many": "weeks",
+      "one": "week"
+    }
   },
   "reports_pageranking": {
     "top_pages": "Top pages most visited",

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormattedMessage, FormattedDate } from 'react-intl';
+import { FormattedMessage, FormattedDate, FormattedPlural, injectIntl } from 'react-intl';
 
 const ReportsFilters = ({
   domains,
@@ -7,6 +7,7 @@ const ReportsFilters = ({
   changeDomain,
   changePeriod,
   periodSelectedDays,
+  injectIntl
 }) => {
   return (
     <header className="report-filters">
@@ -89,4 +90,4 @@ const ReportsFilters = ({
   );
 };
 
-export default ReportsFilters;
+export default injectIntl(ReportsFilters);
