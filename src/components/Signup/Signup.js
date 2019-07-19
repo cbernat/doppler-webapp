@@ -18,7 +18,7 @@ import LanguageSelector from '../shared/LanguageSelector/LanguageSelector';
 import SignupConfirmation from './SignupConfirmation';
 import { FormattedMessageMarkdown } from '../../i18n/FormattedMessageMarkdown';
 import Promotions from '../shared/Promotions/Promotions';
-import queryString from 'query-string';
+import urlParse from 'url-parse';
 
 const fieldNames = {
   firstname: 'firstname',
@@ -37,7 +37,7 @@ const minLength = {
 
 /** Extract the page parameter from url*/
 function extractPage(location) {
-  const parsedQuery = location && location.search && queryString.parse(location.search);
+  const parsedQuery = location && location.search && urlParse(location.search, true);
   return (parsedQuery && (parsedQuery['page'] || parsedQuery['Page'])) || null;
 }
 

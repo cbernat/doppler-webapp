@@ -18,7 +18,7 @@ import { LoginErrorAccountNotValidated } from './LoginErrorAccountNotValidated';
 import { FormattedMessageMarkdown } from '../../i18n/FormattedMessageMarkdown';
 import { connect } from 'formik';
 import Promotions from '../shared/Promotions/Promotions';
-import queryString from 'query-string';
+import urlParse from 'url-parse';
 
 const fieldNames = {
   user: 'user',
@@ -31,7 +31,7 @@ const extractLegacyRedirectUrl = (location) => {
 };
 
 function getForgotErrorMessage(location) {
-  let parsedQuery = location && location.search && queryString.parse(location.search);
+  let parsedQuery = location && location.search && urlParse(location.search, true);
   parsedQuery = (parsedQuery && parsedQuery['message']) || null;
   switch (parsedQuery) {
     case 'ExpiredLink':

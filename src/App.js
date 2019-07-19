@@ -6,7 +6,7 @@ import PrivateRoute from './components/PrivateRoute';
 import PublicRouteWithLegacyFallback from './components/PublicRouteWithLegacyFallback';
 import Reports from './components/Reports/Reports';
 import { InjectAppServices } from './services/pure-di';
-import queryString from 'query-string';
+import urlParse from 'url-parse';
 import { OriginCatcher } from './services/origin-management';
 import RedirectToLegacyUrl from './components/RedirectToLegacyUrl';
 import RedirectWithQuery from './components/RedirectWithQuery';
@@ -44,7 +44,7 @@ class App extends Component {
 
   static getDerivedStateFromProps(props, state) {
     const { lang: langFromUrl } =
-      props.location && props.location.search && queryString.parse(props.location.search);
+      props.location && props.location.search && urlParse(props.location.search, true)
 
     const expectedLang = availableLanguageOrNull(langFromUrl);
 
