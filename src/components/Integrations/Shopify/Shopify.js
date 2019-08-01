@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet';
 import Loading from '../../Loading/Loading';
 import { InjectAppServices } from '../../../services/pure-di';
@@ -13,6 +13,7 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const _ = (id, values) => intl.formatMessage({ id: id }, values);
+  const [doPoll, setDoPoll] = useState(0);
 
   const ShopifyLogo = ({ className }) => (
     <img className={className} src={logo} alt="Shopify logo" />
@@ -80,6 +81,24 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
     </>
   );
 
+  function useInterval(callback, delay) {
+    const savedCallback = useRef();
+
+    useEffect(() => {
+      savedCallback.current = callback;
+    }, [callback]);
+
+    useEffect(() => {
+      function tick() {
+        savedCallback.current();
+      }
+      if (delay !== null) {
+        let id = setInterval(tick, delay);
+        return () => clearInterval(id);
+      }
+    }, [delay]);
+  }
+
   useEffect(() => {
     const getData = async () => {
       const result = await shopifyClient.getShopifyData();
@@ -87,6 +106,7 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
         setError(<FormattedHTMLMessage id="validation_messages.error_unexpected_HTML" />);
       } else if (result.value.length) {
         setIsConnected(true);
+        setDoPoll(0);
         setShops(result.value);
         setError(null);
       } else {
@@ -94,10 +114,21 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
         setError(null);
         setShops(result.value);
       }
-      setIsLoading(false);
+      if (!doPoll) {
+        setIsLoading(false);
+      }
     };
     getData();
-  }, [shopifyClient]);
+  }, [shopifyClient, doPoll]);
+
+  useInterval(
+    () => {
+      if (isLoading) {
+        setDoPoll((doPoll) => doPoll + 1);
+      }
+    },
+    !isConnected && isLoading ? 10000 : null,
+  );
 
   return (
     <>
@@ -196,6 +227,7 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
                   className="dp-button button-medium primary-green"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => setIsLoading(true)}
                 >
                   {_('common.connect')}
                 </a>
