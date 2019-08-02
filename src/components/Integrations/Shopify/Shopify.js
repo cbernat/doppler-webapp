@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet';
 import Loading from '../../Loading/Loading';
 import { InjectAppServices } from '../../../services/pure-di';
@@ -14,7 +14,8 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const _ = (id, values) => intl.formatMessage({ id: id }, values);
-  const [doPoll, setDoPoll] = useState(0);
+  const [isConnecting, setIsConnecting] = useState(false);
+  //const [doPoll, setDoPoll] = useState(0);
 
   const ShopifyLogo = ({ className }) => (
     <img className={className} src={logo} alt="Shopify logo" />
@@ -69,7 +70,7 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
       {_('common.back')}
     </a>
   );
-  
+
   const shopifyHeader = (
     <>
       <div className="block">
@@ -82,36 +83,32 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
     </>
   );
 
-  useEffect(() => {
-    const getData = async () => {
-      const result = await shopifyClient.getShopifyData();
-      if (!result.success) {
-        setError(<FormattedHTMLMessage id="validation_messages.error_unexpected_HTML" />);
-      } else if (result.value.length) {
-        setIsConnected(true);
-        setDoPoll(0);
-        setShops(result.value);
-        setError(null);
-      } else {
-        setIsConnected(false);
-        setError(null);
-        setShops(result.value);
-      }
-      if (!doPoll) {
-        setIsLoading(false);
-      }
-    };
-    getData();
-  }, [shopifyClient, doPoll]);
+  const getData = useCallback(async () => {
+    const result = await shopifyClient.getShopifyData();
+    if (!result.success) {
+      setError(<FormattedHTMLMessage id="validation_messages.error_unexpected_HTML" />);
+    } else if (result.value.length) {
+      setIsConnected(true);
+      setIsConnecting(false);
+      setShops(result.value);
+      setError(null);
+    } else {
+      setIsConnected(false);
+      setError(null);
+      setShops(result.value);
+    }
+    if (!isConnecting) {
+      setIsLoading(false);
+    }
+  }, [isConnecting, shopifyClient]);
 
-  useInterval(
-    () => {
-      if (isLoading) {
-        setDoPoll((doPoll) => doPoll + 1);
-      }
-    },
-    !isConnected && isLoading ? 10000 : null,
-  );
+  useEffect(() => {
+    getData();
+  }, [getData]);
+
+  useInterval(() => {
+    getData();
+  }, 20000);
 
   return (
     <>
@@ -210,7 +207,10 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
                   className="dp-button button-medium primary-green"
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => setIsLoading(true)}
+                  onClick={() => {
+                    setIsConnecting(true);
+                    setIsLoading(true);
+                  }}
                 >
                   {_('common.connect')}
                 </a>
