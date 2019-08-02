@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import Loading from '../../Loading/Loading';
 import { InjectAppServices } from '../../../services/pure-di';
@@ -6,6 +6,7 @@ import logo from './logo.svg';
 import { FormattedHTMLMessage, injectIntl, FormattedDate } from 'react-intl';
 import styled from 'styled-components';
 import { SubscriberListState } from '../../../services/shopify-client';
+import { useInterval } from '../../../utils';
 
 const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
   const [shops, setShops] = useState([]);
@@ -80,24 +81,6 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
       <hr />
     </>
   );
-
-  function useInterval(callback, delay) {
-    const savedCallback = useRef();
-
-    useEffect(() => {
-      savedCallback.current = callback;
-    }, [callback]);
-
-    useEffect(() => {
-      function tick() {
-        savedCallback.current();
-      }
-      if (delay !== null) {
-        let id = setInterval(tick, delay);
-        return () => clearInterval(id);
-      }
-    }, [delay]);
-  }
 
   useEffect(() => {
     const getData = async () => {
