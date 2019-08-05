@@ -9,15 +9,20 @@ import { SubscriberListState } from '../../../services/shopify-client';
 import { useInterval } from '../../../utils';
 
 const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
-  const [connectionData, setConnectionData] = useState({ shops: [], isConnected: false });
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isConnecting, setIsConnecting] = useState(false);
+  const [shopifyState, setShopifyState] = useState({
+    shops: [],
+    isConnected: false,
+    isConnecting: false,
+    error: null,
+    isLoading: true,
+  });
+
   const _ = (id, values) => intl.formatMessage({ id: id }, values);
 
   const ShopifyLogo = ({ className }) => (
     <img className={className} src={logo} alt="Shopify logo" />
   );
+
   const StyledShopifyLogo = styled(ShopifyLogo)`
     width: 80px;
     @media only screen and (max-width: 600px) {
@@ -87,16 +92,21 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
     callback: async () => {
       const result = await shopifyClient.getShopifyData();
       if (!result.success) {
-        setError(<FormattedHTMLMessage id="validation_messages.error_unexpected_HTML" />);
+        setShopifyState({
+          error: <FormattedHTMLMessage id="validation_messages.error_unexpected_HTML" />,
+          isLoading: false,
+        });
       } else if (result.value.length) {
-        setConnectionData({ shops: result.value, isConnected: true });
-        setIsConnecting(false);
-        setError(null);
+        setShopifyState({
+          error: null,
+          shops: result.value,
+          isConnected: true,
+          isConnecting: false,
+          isLoading: false,
+        });
       } else {
-        setConnectionData({ shops: result.value, isConnected: false });
-        setError(null);
+        setShopifyState({ error: null, shops: result.value, isConnected: false, isLoading: false });
       }
-      setIsLoading(false);
     },
   });
 
@@ -106,7 +116,7 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
       <section className="dp-page-wrapper">
         <Breadcrumb />
         <div className="dp-integration">
-          {isLoading ? (
+          {shopifyState.isLoading ? (
             <>
               <div className="dp-integration__block">
                 {shopifyHeader}
@@ -114,23 +124,23 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
               </div>
               <Loading />
             </>
-          ) : error ? (
+          ) : shopifyState.error ? (
             <>
               <div className="dp-integration__block">
                 {shopifyHeader}
                 <div className="block">
                   <div className="dp-msj-error bounceIn">
-                    <p>{error}</p>
+                    <p>{shopifyState.error}</p>
                   </div>
                 </div>
               </div>
               <footer className="dp-integration__actions">{backButton}</footer>
             </>
-          ) : connectionData.isConnected ? (
+          ) : shopifyState.isConnected ? (
             <>
               <div className="dp-integration__block">
                 {shopifyHeader}
-                {connectionData.shops.map((shop) => (
+                {shopifyState.shops.map((shop) => (
                   <div key={shop.shopName} className="block dp-integration__status">
                     <div className="status__info">
                       <div>
@@ -174,7 +184,7 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
                 <hr />
                 <div className="block">
                   <ul>
-                    {connectionData.shops.map((shop) => (
+                    {shopifyState.shops.map((shop) => (
                       <li key={shop.list.id}>
                         <Table list={shop.list} />
                       </li>
@@ -192,18 +202,14 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
 
               <footer className="dp-integration__actions">
                 {backButton}
-                {!isConnecting ? (
+                {!shopifyState.isConnecting ? (
                   <a
                     href={_('shopify.connect_url')}
-                    className={
-                      isConnecting
-                        ? 'dp-button button-medium primary-green button--loading'
-                        : 'dp-button button-medium primary-green'
-                    }
+                    className="dp-button button-medium primary-green"
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => {
-                      setIsConnecting(true);
+                      setShopifyState({ isConnecting: true });
                     }}
                   >
                     {_('common.connect')}
