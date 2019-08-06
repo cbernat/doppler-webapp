@@ -10,10 +10,6 @@ import { useInterval } from '../../../utils';
 
 const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
   const [shopifyState, setShopifyState] = useState({
-    shops: [],
-    isConnected: false,
-    isConnecting: false,
-    error: null,
     isLoading: true,
   });
 
@@ -94,18 +90,14 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
       if (!result.success) {
         setShopifyState({
           error: <FormattedHTMLMessage id="validation_messages.error_unexpected_HTML" />,
-          isLoading: false,
         });
       } else if (result.value.length) {
         setShopifyState({
-          error: null,
           shops: result.value,
           isConnected: true,
-          isConnecting: false,
-          isLoading: false,
         });
       } else {
-        setShopifyState({ error: null, shops: result.value, isConnected: false, isLoading: false });
+        setShopifyState({ shops: [] });
       }
     },
   });
