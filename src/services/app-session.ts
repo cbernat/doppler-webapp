@@ -20,6 +20,11 @@ export interface ShopifyConnectionData {
   jwtToken: string;
 }
 
+export interface DopplerAPIConnectionData {
+  jwtToken: string;
+  userAccount: string;
+}
+
 interface AuthenticatedAppSessionWithDatahub
   extends DatahubConnectionData,
     AuthenticatedAppSession {}
