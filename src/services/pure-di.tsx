@@ -6,6 +6,7 @@ import { DatahubClient, HttpDatahubClient } from './datahub-client';
 import { AppSession, createAppSessionRef } from './app-session';
 import { OriginResolver, LocalStorageOriginResolver } from './origin-management';
 import { ShopifyClient, HttpShopifyClient } from './shopify-client';
+import { DopplerAPIClient, HttpDopplerAPIClient } from './doppler-api-client';
 import { DopplerSitesClient, HttpDopplerSitesClient } from './doppler-sites-client';
 import { ExperimentalFeatures } from './experimental-features';
 
@@ -38,6 +39,7 @@ export interface AppServices {
   shopifyClient: ShopifyClient;
   dopplerSitesClient: DopplerSitesClient;
   experimentalFeatures: ExperimentalFeatures;
+  dopplerAPIClient: DopplerAPIClient;
 }
 
 /**
@@ -124,6 +126,18 @@ export class AppCompositionRoot implements AppServices {
       'shopifyClient',
       () =>
         new HttpShopifyClient({
+          axiosStatic: this.axiosStatic,
+          baseUrl: this.appConfiguration.shopifyUrl,
+          connectionDataRef: this.appSessionRef,
+        }),
+    );
+  }
+
+  get dopplerAPIClient() {
+    return this.singleton(
+      'dopplerAPIClient',
+      () =>
+        new HttpDopplerAPIClient({
           axiosStatic: this.axiosStatic,
           baseUrl: this.appConfiguration.shopifyUrl,
           connectionDataRef: this.appSessionRef,
