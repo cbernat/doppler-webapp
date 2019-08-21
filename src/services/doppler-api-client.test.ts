@@ -49,7 +49,6 @@ describe('HttpDopplerAPIClient', () => {
     const result = await dopplerAPIClient.getListData(27311899);
 
     // Assert
-    console.log(result);
     expect(request).toBeCalledTimes(1);
     expect(result).not.toBe(undefined);
     expect(result.success).toBe(true);

@@ -8,7 +8,10 @@ import styled from 'styled-components';
 import { SubscriberListState } from '../../../services/shopify-client';
 import { useInterval } from '../../../utils';
 
-const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
+const Shopify = ({
+  intl,
+  dependencies: { shopifyClient, dopplerAPIClient, experimentalFeatures },
+}) => {
   const [shopifyState, setShopifyState] = useState({
     isLoading: true,
   });
@@ -90,16 +93,33 @@ const Shopify = ({ intl, dependencies: { shopifyClient } }) => {
     </>
   );
 
+  const getSubscribersAmountFromAPI = async (listId, apikey) => {
+    const resultAPI = await dopplerAPIClient.getListData(listId, apikey);
+    if (resultAPI.success) {
+      return resultAPI.value.amountSubscribers;
+    }
+    return 0;
+  };
+
   useInterval({
     runOnStart: true,
     delay: 20000,
     callback: async () => {
-      const result = await shopifyClient.getShopifyData();
+      let result = await shopifyClient.getShopifyData();
       if (!result.success) {
         setShopifyState({
           error: <FormattedHTMLMessage id="validation_messages.error_unexpected_HTML" />,
         });
-      } else if (result.value.length) {
+      } else if (result.value && result.value.length) {
+        // API feature first approach
+        const dopplerAPIFeature = experimentalFeatures.getFeature('DopplerAPI');
+        if (result.value[0].list && dopplerAPIFeature && dopplerAPIFeature.apikey) {
+          result.value[0].list.amountSubscribers = await getSubscribersAmountFromAPI(
+            result.value[0].list.id,
+            dopplerAPIFeature.apikey,
+          );
+        }
+
         setShopifyState({
           shops: result.value,
           isConnected: true,

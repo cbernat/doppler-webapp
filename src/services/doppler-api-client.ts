@@ -5,7 +5,7 @@ import { RefObject } from 'react';
 import { SubscriberList, SubscriberListState } from './shopify-client';
 
 export interface DopplerAPIClient {
-  getListData(idList: number): Promise<ResultWithoutExpectedErrors<SubscriberList>>;
+  getListData(idList: number, apikey: string): Promise<ResultWithoutExpectedErrors<SubscriberList>>;
 }
 
 export class HttpDopplerAPIClient implements DopplerAPIClient {
@@ -54,10 +54,12 @@ export class HttpDopplerAPIClient implements DopplerAPIClient {
     };
   }
 
-  public async getListData(listId: number): Promise<ResultWithoutExpectedErrors<SubscriberList>> {
+  public async getListData(
+    listId: number,
+    apikey: string,
+  ): Promise<ResultWithoutExpectedErrors<SubscriberList>> {
     try {
       const { jwtToken, userAccount } = this.getDopplerAPIConnectionData();
-      const apikey = 'APiKEY'; //this will be removed when jwt token is enabled
       const response = await this.axios.request({
         method: 'GET',
         url: `https://restapi.fromdoppler.com/accounts/${userAccount}/lists/${listId}?api_key=${apikey}`,
