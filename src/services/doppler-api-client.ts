@@ -59,11 +59,12 @@ export class HttpDopplerAPIClient implements DopplerAPIClient {
     apikey: string,
   ): Promise<ResultWithoutExpectedErrors<SubscriberList>> {
     try {
+      // eslint-disable-next-line
       const { jwtToken, userAccount } = this.getDopplerAPIConnectionData();
       const response = await this.axios.request({
         method: 'GET',
         url: `https://restapi.fromdoppler.com/accounts/${userAccount}/lists/${listId}?api_key=${apikey}`,
-        headers: { Authorization: `token ${jwtToken}` },
+        //headers: { Authorization: `token ${jwtToken}` },
       });
       if (response.data && response.status === 200) {
         return { success: true, value: this.mapList(response.data) };
