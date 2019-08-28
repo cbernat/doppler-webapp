@@ -112,7 +112,8 @@ const Shopify = ({
         });
       } else if (result.value && result.value.length) {
         // API feature first approach
-        const dopplerAPIFeature = experimentalFeatures.getFeature('DopplerAPI');
+        const dopplerAPIFeature =
+          experimentalFeatures && experimentalFeatures.getFeature('DopplerAPI');
         if (result.value[0].list && dopplerAPIFeature && dopplerAPIFeature.apikey) {
           result.value[0].list.amountSubscribers = await getSubscribersAmountFromAPI(
             result.value[0].list.id,
