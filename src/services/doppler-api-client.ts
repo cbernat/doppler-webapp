@@ -48,7 +48,7 @@ export class HttpDopplerAPIClient implements DopplerAPIClient {
       id: data.listId,
       amountSubscribers: data.subscribersCount,
       state:
-        data.currentStatus === 'ready'
+        data.currentStatus === SubscriberListState.ready
           ? SubscriberListState.ready
           : SubscriberListState.synchronizingContacts,
     };
@@ -64,9 +64,9 @@ export class HttpDopplerAPIClient implements DopplerAPIClient {
       const response = await this.axios.request({
         method: 'GET',
         url: `https://restapi.fromdoppler.com/accounts/${userAccount}/lists/${listId}?api_key=${apikey}`,
-        //headers: { Authorization: `token ${jwtToken}` },
+        //headers: { Authorization: `token ${jwtToken}` }, // This line will remain commented until jwtToken is enabled for dopplerAPI
       });
-      if (response.data && response.status === 200) {
+      if (response.status === 200 && response.data) {
         return { success: true, value: this.mapList(response.data) };
       } else {
         return { success: false, error: response.statusText };

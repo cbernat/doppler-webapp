@@ -52,6 +52,7 @@ describe('HttpDopplerAPIClient', () => {
     expect(request).toBeCalledTimes(1);
     expect(result).not.toBe(undefined);
     expect(result.success).toBe(true);
+    expect(result.value.amountSubscribers).not.toBe(undefined);
   });
 
   it('should set throw error when list does not exist', async () => {
@@ -66,7 +67,6 @@ describe('HttpDopplerAPIClient', () => {
 
     // Act
     const result = await dopplerAPIClient.getListData(27311899);
-
     // Assert
     expect(request).toBeCalledTimes(1);
     expect(result).not.toBe(undefined);
