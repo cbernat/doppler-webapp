@@ -5,6 +5,11 @@ import DopplerIntlProvider from '../../../i18n/DopplerIntlProvider.double-with-i
 import { AppServicesProvider } from '../../../services/pure-di';
 import Shopify from './Shopify';
 import { SubscriberListState } from '../../../services/shopify-client';
+import {
+  experimentalFeatures,
+  ExperimentalFeatures,
+} from '../../../services/experimental-features';
+import { FakeLocalStorage } from '../../../services/test-utils/local-storage-double';
 
 const oneShop = [
   {
@@ -151,5 +156,53 @@ describe('Shopify Component', () => {
     expect(container.querySelector('.loading-box')).toBeInTheDocument();
     await waitForDomChange();
     expect(getByText('validation_messages.error_unexpected_HTML'));
+  });
+
+  // Failing test indicating memory leak in shopify component
+  xit('should use DopplerAPI client when feature is enabled', async () => {
+    // Arrange
+    const experimentalFeaturesData = {
+      DopplerAPI: { apikey: 'myapikey' },
+    };
+    const storage = new FakeLocalStorage();
+    storage.setItem('dopplerExperimental', JSON.stringify(experimentalFeaturesData));
+    const experimentalFeatures = new ExperimentalFeatures(storage);
+    const listExist = {
+      success: true,
+      value: {
+        name: 'Shopify Contacto',
+        id: 27311899,
+        amountSubscribers: 200,
+        state: 1,
+      },
+    };
+
+    const shopifyClientDouble = {
+      getShopifyData: async () => oneShopConnected,
+    };
+    const dopplerAPIClientDouble = {
+      getListData: async () => listExist,
+    };
+
+    // Act
+    const { container, getByText } = render(
+      <AppServicesProvider forcedServices={{}}>
+        <DopplerIntlProvider>
+          <Shopify
+            dependencies={{
+              shopifyClient: shopifyClientDouble,
+              dopplerAPIClient: dopplerAPIClientDouble,
+              experimentalFeatures: experimentalFeatures,
+            }}
+          />
+        </DopplerIntlProvider>
+      </AppServicesProvider>,
+    );
+
+    // Assert
+    expect(container.querySelector('.loading-box')).toBeInTheDocument();
+    await waitForDomChange();
+    console.log(container);
+    expect(getByText(listExist.value.amountSubscribers));
   });
 });
