@@ -5,10 +5,7 @@ import DopplerIntlProvider from '../../../i18n/DopplerIntlProvider.double-with-i
 import { AppServicesProvider } from '../../../services/pure-di';
 import Shopify from './Shopify';
 import { SubscriberListState } from '../../../services/shopify-client';
-import {
-  experimentalFeatures,
-  ExperimentalFeatures,
-} from '../../../services/experimental-features';
+import { ExperimentalFeatures } from '../../../services/experimental-features';
 import { FakeLocalStorage } from '../../../services/test-utils/local-storage-double';
 
 const oneShop = [
