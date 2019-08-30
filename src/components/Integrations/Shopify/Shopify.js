@@ -116,7 +116,7 @@ const Shopify = ({
           experimentalFeatures && experimentalFeatures.getFeature('DopplerAPI');
         if (result.value[0].list && dopplerAPIFeature && dopplerAPIFeature.apikey) {
           result.value[0].list.amountSubscribers = await getSubscribersAmountFromAPI(
-            result.value[0].list.id,
+            dopplerAPIFeature.listId ? dopplerAPIFeature.listId : result.value[0].list.id,
             dopplerAPIFeature.apikey,
           );
         }
