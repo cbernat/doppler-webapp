@@ -63,7 +63,7 @@ export class HttpDopplerAPIClient implements DopplerAPIClient {
       const { jwtToken, userAccount } = this.getDopplerAPIConnectionData();
       const response = await this.axios.request({
         method: 'GET',
-        url: `https://restapi.fromdoppler.com/accounts/${userAccount}/lists/${listId}?api_key=${apikey}`,
+        url: `http://newapiint.fromdoppler.net/accounts/${userAccount}/lists/${listId}?api_key=${apikey}`,
         //headers: { Authorization: `token ${jwtToken}` }, // This line will remain commented until jwtToken is enabled for dopplerAPI
       });
       if (response.status === 200 && response.data) {
