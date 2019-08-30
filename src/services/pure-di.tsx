@@ -84,6 +84,7 @@ export class AppCompositionRoot implements AppServices {
         forgotPassword: process.env.REACT_APP_USE_DOPPLER_LEGACY_FORGOTPASSWORD === 'true',
       },
       shopifyUrl: process.env.REACT_APP_SHOPIFY_URL as string,
+      dopplerApiUrl: process.env.REACT_APP_DOPPLER_API_URL as string,
     }));
   }
 
@@ -139,7 +140,7 @@ export class AppCompositionRoot implements AppServices {
       () =>
         new HttpDopplerAPIClient({
           axiosStatic: this.axiosStatic,
-          baseUrl: this.appConfiguration.shopifyUrl,
+          baseUrl: this.appConfiguration.dopplerApiUrl,
           connectionDataRef: this.appSessionRef,
         }),
     );
