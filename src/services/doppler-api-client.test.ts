@@ -1,12 +1,12 @@
 import { AxiosStatic } from 'axios';
-import { HttpDopplerAPIClient } from './doppler-api-client';
+import { HttpDopplerApiClient } from './doppler-api-client';
 import { RefObject } from 'react';
 import { AppSession } from './app-session';
 import { DopplerLegacyUserData } from './doppler-legacy-client';
 
 const consoleError = console.error;
 
-function createHttpDopplerAPIClient(axios: any) {
+function createHttpDopplerApiClient(axios: any) {
   const axiosStatic = {
     create: () => axios,
   } as AxiosStatic;
@@ -17,7 +17,7 @@ function createHttpDopplerAPIClient(axios: any) {
       userData: { user: { email: 'email@mail.com' } } as DopplerLegacyUserData,
     },
   } as RefObject<AppSession>;
-  const apiClient = new HttpDopplerAPIClient({
+  const apiClient = new HttpDopplerApiClient({
     axiosStatic,
     baseUrl: 'http://api.test',
     connectionDataRef,
@@ -25,7 +25,7 @@ function createHttpDopplerAPIClient(axios: any) {
   return apiClient;
 }
 
-describe('HttpDopplerAPIClient', () => {
+describe('HttpDopplerApiClient', () => {
   beforeEach(() => {
     console.error = consoleError; // Restore console error logs
   });
@@ -43,10 +43,10 @@ describe('HttpDopplerAPIClient', () => {
       status: 200,
     };
     const request = jest.fn(async () => listExist);
-    const dopplerAPIClient = createHttpDopplerAPIClient({ request });
+    const dopplerAPIClient = createHttpDopplerApiClient({ request });
 
     // Act
-    const result = await dopplerAPIClient.getListData(27311899);
+    const result = await dopplerAPIClient.getListData(27311899, 'MyAPIKey');
 
     // Assert
     expect(request).toBeCalledTimes(1);
@@ -63,10 +63,10 @@ describe('HttpDopplerAPIClient', () => {
       statusText: 'Error',
     };
     const request = jest.fn(async () => listNotExist);
-    const dopplerAPIClient = createHttpDopplerAPIClient({ request });
+    const dopplerApiClient = createHttpDopplerApiClient({ request });
 
     // Act
-    const result = await dopplerAPIClient.getListData(27311899);
+    const result = await dopplerApiClient.getListData(27311899, 'MyAPIKey');
     // Assert
     expect(request).toBeCalledTimes(1);
     expect(result).not.toBe(undefined);

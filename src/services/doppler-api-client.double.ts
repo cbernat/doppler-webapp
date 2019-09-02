@@ -1,4 +1,4 @@
-import { DopplerAPIClient } from './doppler-api-client';
+import { DopplerApiClient } from './doppler-api-client';
 import { SubscriberList } from './shopify-client';
 import { ResultWithoutExpectedErrors } from '../doppler-types';
 import { timeout } from '../utils';
@@ -15,7 +15,7 @@ const listExist = {
 // To test when list doesn't exist
 // const listNotExists = { success: false, error: 'Error' };
 
-export class HardcodedDopplerApiClient implements DopplerAPIClient {
+export class HardcodedDopplerApiClient implements DopplerApiClient {
   public async getListData(
     idList: number,
     apikey: string,

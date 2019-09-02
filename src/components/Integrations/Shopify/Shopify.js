@@ -10,7 +10,7 @@ import { useInterval } from '../../../utils';
 
 const Shopify = ({
   intl,
-  dependencies: { shopifyClient, dopplerAPIClient, experimentalFeatures },
+  dependencies: { shopifyClient, dopplerApiClient, experimentalFeatures },
 }) => {
   const [shopifyState, setShopifyState] = useState({
     isLoading: true,
@@ -94,7 +94,7 @@ const Shopify = ({
   );
 
   const getSubscribersAmountFromAPI = async (listId, apikey) => {
-    const resultAPI = await dopplerAPIClient.getListData(listId, apikey);
+    const resultAPI = await dopplerApiClient.getListData(listId, apikey);
     if (resultAPI.success) {
       return resultAPI.value.amountSubscribers;
     } else {

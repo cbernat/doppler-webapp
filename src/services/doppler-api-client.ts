@@ -4,15 +4,15 @@ import { AppSession } from './app-session';
 import { RefObject } from 'react';
 import { SubscriberList, SubscriberListState } from './shopify-client';
 
-export interface DopplerAPIClient {
+export interface DopplerApiClient {
   getListData(idList: number, apikey: string): Promise<ResultWithoutExpectedErrors<SubscriberList>>;
 }
-interface DopplerAPIConnectionData {
+interface DopplerApiConnectionData {
   jwtToken: string;
   userAccount: string;
 }
 
-export class HttpDopplerAPIClient implements DopplerAPIClient {
+export class HttpDopplerApiClient implements DopplerApiClient {
   private readonly axios: AxiosInstance;
   private readonly baseUrl: string;
   private readonly connectionDataRef: RefObject<AppSession>;
@@ -33,7 +33,7 @@ export class HttpDopplerAPIClient implements DopplerAPIClient {
     this.connectionDataRef = connectionDataRef;
   }
 
-  private getDopplerAPIConnectionData(): DopplerAPIConnectionData {
+  private getDopplerApiConnectionData(): DopplerApiConnectionData {
     const connectionData = this.connectionDataRef.current;
     if (
       !connectionData ||
@@ -68,7 +68,7 @@ export class HttpDopplerAPIClient implements DopplerAPIClient {
     try {
       // until jwtToken is enabled disable use of variable rule
       // eslint-disable-next-line
-      const { jwtToken, userAccount } = this.getDopplerAPIConnectionData();
+      const { jwtToken, userAccount } = this.getDopplerApiConnectionData();
       const response = await this.axios.request({
         method: 'GET',
         url: `/accounts/${userAccount}/lists/${listId}`,
