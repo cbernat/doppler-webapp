@@ -66,13 +66,12 @@ export class HttpDopplerApiClient implements DopplerApiClient {
     apikey: string,
   ): Promise<ResultWithoutExpectedErrors<SubscriberList>> {
     try {
-      // until jwtToken is enabled disable use of variable rule
-      // eslint-disable-next-line
-      const { jwtToken, userAccount } = this.getDopplerApiConnectionData();
+      const { userAccount } = this.getDopplerApiConnectionData();
+      const jwtToken = apikey ? apikey : this.getDopplerApiConnectionData().jwtToken;
       const response = await this.axios.request({
         method: 'GET',
         url: `/accounts/${userAccount}/lists/${listId}`,
-        headers: { Authorization: `token ${apikey}` }, // Replace apikey with jwtToken when enabled for dopplerAPI
+        headers: { Authorization: `token ${jwtToken}` },
       });
       if (response.status === 200 && response.data) {
         return { success: true, value: this.mapList(response.data) };
