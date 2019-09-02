@@ -1,11 +1,15 @@
 import { ResultWithoutExpectedErrors } from '../doppler-types';
 import { AxiosInstance, AxiosStatic } from 'axios';
-import { AppSession, DopplerAPIConnectionData } from './app-session';
+import { AppSession } from './app-session';
 import { RefObject } from 'react';
 import { SubscriberList, SubscriberListState } from './shopify-client';
 
 export interface DopplerAPIClient {
   getListData(idList: number, apikey: string): Promise<ResultWithoutExpectedErrors<SubscriberList>>;
+}
+interface DopplerAPIConnectionData {
+  jwtToken: string;
+  userAccount: string;
 }
 
 export class HttpDopplerAPIClient implements DopplerAPIClient {
@@ -39,7 +43,10 @@ export class HttpDopplerAPIClient implements DopplerAPIClient {
     ) {
       throw new Error('Doppler API connection data is not available');
     }
-    return { jwtToken: connectionData.jwtToken, userAccount: connectionData.userData.user.email };
+    return {
+      jwtToken: connectionData.jwtToken,
+      userAccount: connectionData ? connectionData.userData.user.email : '',
+    };
   }
 
   private mapList(data: any): SubscriberList {
@@ -59,12 +66,13 @@ export class HttpDopplerAPIClient implements DopplerAPIClient {
     apikey: string,
   ): Promise<ResultWithoutExpectedErrors<SubscriberList>> {
     try {
+      // until jwtToken is enabled disable use of variable rule
       // eslint-disable-next-line
       const { jwtToken, userAccount } = this.getDopplerAPIConnectionData();
       const response = await this.axios.request({
         method: 'GET',
-        url: `http://newapiint.fromdoppler.net/accounts/${userAccount}/lists/${listId}?api_key=${apikey}`,
-        //headers: { Authorization: `token ${jwtToken}` }, // This line will remain commented until jwtToken is enabled for dopplerAPI
+        url: `/accounts/${userAccount}/lists/${listId}`,
+        headers: { Authorization: `token ${apikey}` }, // Replace apikey with jwtToken when enabled for dopplerAPI
       });
       if (response.status === 200 && response.data) {
         return { success: true, value: this.mapList(response.data) };
