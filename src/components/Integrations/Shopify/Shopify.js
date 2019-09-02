@@ -97,29 +97,35 @@ const Shopify = ({
     const resultAPI = await dopplerAPIClient.getListData(listId, apikey);
     if (resultAPI.success) {
       return resultAPI.value.amountSubscribers;
+    } else {
+      return null;
     }
-    return 0;
+  };
+
+  const updateSubscriberCount = async (list) => {
+    const dopplerAPIFeature = experimentalFeatures && experimentalFeatures.getFeature('DopplerAPI');
+    if (list && dopplerAPIFeature && dopplerAPIFeature.apikey) {
+      const subscribersCount = await getSubscribersAmountFromAPI(
+        dopplerAPIFeature.listId ? dopplerAPIFeature.listId : list.id,
+        dopplerAPIFeature.apikey,
+      );
+      list.amountSubscribers = subscribersCount ? subscribersCount : list.amountSubscribers;
+    }
+    return list;
   };
 
   useInterval({
     runOnStart: true,
     delay: 20000,
     callback: async () => {
-      let result = await shopifyClient.getShopifyData();
+      const result = await shopifyClient.getShopifyData();
       if (!result.success) {
         setShopifyState({
           error: <FormattedHTMLMessage id="validation_messages.error_unexpected_HTML" />,
         });
       } else if (result.value && result.value.length) {
-        // API feature first approach
-        const dopplerAPIFeature =
-          experimentalFeatures && experimentalFeatures.getFeature('DopplerAPI');
-        if (result.value[0].list && dopplerAPIFeature && dopplerAPIFeature.apikey) {
-          result.value[0].list.amountSubscribers = await getSubscribersAmountFromAPI(
-            dopplerAPIFeature.listId ? dopplerAPIFeature.listId : result.value[0].list.id,
-            dopplerAPIFeature.apikey,
-          );
-        }
+        //updates only first shop
+        result.value[0].list = await updateSubscriberCount(result.value[0].list);
 
         setShopifyState({
           shops: result.value,
