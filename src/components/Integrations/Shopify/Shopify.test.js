@@ -16,7 +16,7 @@ const oneShop = [
       name: 'MyList',
       id: 1251,
       amountSubscribers: 2,
-      state: 'SubscriberListState.ready',
+      state: SubscriberListState.ready,
     },
   },
 ];
@@ -28,7 +28,7 @@ const twoShops = [
       name: 'MyList',
       id: 1251,
       amountSubscribers: 2,
-      state: 'SubscriberListState.ready',
+      state: SubscriberListState.ready,
     },
   },
   {
@@ -38,7 +38,7 @@ const twoShops = [
       name: 'MyList',
       id: 1251,
       amountSubscribers: 2,
-      state: 'SubscriberListState.ready',
+      state: SubscriberListState.ready,
     },
   },
 ];
@@ -92,12 +92,25 @@ describe('Shopify Component', () => {
   });
 
   it('should get connected user with one shop and one list in sync state', async () => {
-    let syncList = { ...oneShopConnected };
-    syncList.list = { ...oneShopConnected.list };
-    syncList.list.state = SubscriberListState.synchronizingContacts;
+    // Arrange
+    const oneShopSyncList = [
+      {
+        shopName: 'myshop.com',
+        synchronization_date: new Date('2017-12-17'),
+        list: {
+          name: 'MyList',
+          id: 1251,
+          amountSubscribers: 2,
+          state: SubscriberListState.synchronizingContacts,
+        },
+      },
+    ];
+    const syncList = { success: true, value: oneShopSyncList };
     const shopifyClientDouble = {
       getShopifyData: async () => syncList,
     };
+
+    // Act
     const { container, getByText } = render(
       <AppServicesProvider
         forcedServices={{
@@ -109,6 +122,8 @@ describe('Shopify Component', () => {
         </DopplerIntlProvider>
       </AppServicesProvider>,
     );
+
+    // Assert
     expect(container.querySelector('.loading-box')).toBeInTheDocument();
     await waitForDomChange();
     expect(getByText('common.synchronizing'));
@@ -155,11 +170,10 @@ describe('Shopify Component', () => {
     expect(getByText('validation_messages.error_unexpected_HTML'));
   });
 
-  // Failing test indicating memory leak in shopify component
-  xit('should use DopplerAPI client when feature is enabled', async () => {
+  it('should use DopplerAPI client when feature is enabled', async () => {
     // Arrange
     const experimentalFeaturesData = {
-      DopplerAPI: { apikey: 'myapikey' },
+      DopplerAPI: { apikey: 'myapikey', listId: 455222 },
     };
     const storage = new FakeLocalStorage();
     storage.setItem('dopplerExperimental', JSON.stringify(experimentalFeaturesData));
@@ -170,7 +184,7 @@ describe('Shopify Component', () => {
         name: 'Shopify Contacto',
         id: 27311899,
         amountSubscribers: 200,
-        state: 1,
+        state: SubscriberListState.ready,
       },
     };
 
@@ -183,15 +197,15 @@ describe('Shopify Component', () => {
 
     // Act
     const { container, getByText } = render(
-      <AppServicesProvider forcedServices={{}}>
+      <AppServicesProvider
+        forcedServices={{
+          shopifyClient: shopifyClientDouble,
+          dopplerApiClient: dopplerAPIClientDouble,
+          experimentalFeatures: experimentalFeatures,
+        }}
+      >
         <DopplerIntlProvider>
-          <Shopify
-            dependencies={{
-              shopifyClient: shopifyClientDouble,
-              dopplerAPIClient: dopplerAPIClientDouble,
-              experimentalFeatures: experimentalFeatures,
-            }}
-          />
+          <Shopify />
         </DopplerIntlProvider>
       </AppServicesProvider>,
     );
@@ -199,7 +213,7 @@ describe('Shopify Component', () => {
     // Assert
     expect(container.querySelector('.loading-box')).toBeInTheDocument();
     await waitForDomChange();
-    console.log(container);
-    expect(getByText(listExist.value.amountSubscribers));
+    expect(container.querySelector('.dp-integration__status')).toBeInTheDocument();
+    expect(getByText(listExist.value.amountSubscribers.toString()));
   });
 });
