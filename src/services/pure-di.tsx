@@ -142,6 +142,7 @@ export class AppCompositionRoot implements AppServices {
           axiosStatic: this.axiosStatic,
           baseUrl: this.appConfiguration.dopplerApiUrl,
           connectionDataRef: this.appSessionRef,
+          experimentalFeatures: this.experimentalFeatures,
         }),
     );
   }

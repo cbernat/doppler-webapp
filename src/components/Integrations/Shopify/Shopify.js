@@ -104,11 +104,8 @@ const Shopify = ({
 
   const updateSubscriberCount = async (list) => {
     const dopplerAPIFeature = experimentalFeatures && experimentalFeatures.getFeature('DopplerAPI');
-    if (list && dopplerAPIFeature && dopplerAPIFeature.apikey) {
-      const subscribersCount = await getSubscribersAmountFromAPI(
-        dopplerAPIFeature.listId ? dopplerAPIFeature.listId : list.id,
-        dopplerAPIFeature.apikey,
-      );
+    if (list && dopplerAPIFeature) {
+      const subscribersCount = await getSubscribersAmountFromAPI(list.id);
       list.amountSubscribers = subscribersCount ? subscribersCount : list.amountSubscribers;
     }
     return list;

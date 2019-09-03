@@ -43,10 +43,10 @@ describe('HttpDopplerApiClient', () => {
       status: 200,
     };
     const request = jest.fn(async () => listExist);
-    const dopplerAPIClient = createHttpDopplerApiClient({ request });
+    const dopplerApiClient = createHttpDopplerApiClient({ request });
 
     // Act
-    const result = await dopplerAPIClient.getListData(27311899, 'MyAPIKey');
+    const result = await dopplerApiClient.getListData(27311899);
 
     // Assert
     expect(request).toBeCalledTimes(1);
@@ -66,7 +66,8 @@ describe('HttpDopplerApiClient', () => {
     const dopplerApiClient = createHttpDopplerApiClient({ request });
 
     // Act
-    const result = await dopplerApiClient.getListData(27311899, 'MyAPIKey');
+    const result = await dopplerApiClient.getListData(27311899);
+
     // Assert
     expect(request).toBeCalledTimes(1);
     expect(result).not.toBe(undefined);
