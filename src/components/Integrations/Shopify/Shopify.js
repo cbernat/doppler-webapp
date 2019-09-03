@@ -106,24 +106,30 @@ const Shopify = ({
     const dopplerAPIFeature = experimentalFeatures && experimentalFeatures.getFeature('DopplerAPI');
     if (list && dopplerAPIFeature) {
       const subscribersCount = await getSubscribersAmountFromAPI(list.id);
-      list.amountSubscribers = subscribersCount ? subscribersCount : list.amountSubscribers;
+      list.amountSubscribers = subscribersCount != null ? subscribersCount : list.amountSubscribers;
     }
     return list;
+  };
+
+  const getShopifyData = async () => {
+    const shopifyResult = await shopifyClient.getShopifyData();
+    if (shopifyResult.value && shopifyResult.value.length) {
+      //updates only first shop
+      shopifyResult.value[0].list = await updateSubscriberCount(shopifyResult.value[0].list);
+    }
+    return shopifyResult;
   };
 
   useInterval({
     runOnStart: true,
     delay: 20000,
     callback: async () => {
-      const result = await shopifyClient.getShopifyData();
+      const result = await getShopifyData();
       if (!result.success) {
         setShopifyState({
           error: <FormattedHTMLMessage id="validation_messages.error_unexpected_HTML" />,
         });
       } else if (result.value && result.value.length) {
-        //updates only first shop
-        result.value[0].list = await updateSubscriberCount(result.value[0].list);
-
         setShopifyState({
           shops: result.value,
           isConnected: true,
