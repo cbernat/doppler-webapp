@@ -29,21 +29,29 @@ export class HttpShopifyClient implements ShopifyClient {
   private readonly axios: AxiosInstance;
   private readonly baseUrl: string;
   private readonly connectionDataRef: RefObject<AppSession>;
+  private etag: string;
+  private cachedResponse?: any;
 
   constructor({
     axiosStatic,
     baseUrl,
     connectionDataRef,
+    etag,
+    cachedResponse,
   }: {
     axiosStatic: AxiosStatic;
     baseUrl: string;
     connectionDataRef: RefObject<AppSession>;
+    etag?: string;
+    cachedResponse?: any;
   }) {
     this.baseUrl = baseUrl;
     this.axios = axiosStatic.create({
       baseURL: this.baseUrl,
     });
     this.connectionDataRef = connectionDataRef;
+    this.etag = etag ? etag : '';
+    this.cachedResponse = cachedResponse ? cachedResponse : undefined;
   }
 
   private getShopifyConnectionData(): ShopifyConnectionData {
@@ -72,7 +80,20 @@ export class HttpShopifyClient implements ShopifyClient {
     };
   }
 
+  private reevaluateCurrentResponse(headers: any, formattedResponse: any) {
+    let correctResponse;
+    if (headers.etag && this.etag.length && headers.etag.includes(this.etag)) {
+      correctResponse = this.cachedResponse;
+    } else {
+      correctResponse = formattedResponse;
+      this.etag = headers.etag;
+      this.cachedResponse = correctResponse;
+    }
+    return correctResponse;
+  }
+
   public async getShopifyData(): Promise<ResultWithoutExpectedErrors<ConnectedShop[]>> {
+    let currentResponse: ResultWithoutExpectedErrors<ConnectedShop[]>;
     try {
       const { jwtToken } = this.getShopifyConnectionData();
       const response = await this.axios.request({
@@ -80,17 +101,20 @@ export class HttpShopifyClient implements ShopifyClient {
         url: `/me/shops`,
         headers: { Authorization: `token ${jwtToken}` },
       });
+
       if (response.data && response.data.length) {
         const connectedShops = response.data.map((shop: any) => {
           return this.mapShop(shop);
         });
-        return { success: true, value: connectedShops };
+        currentResponse = { success: true, value: connectedShops };
       } else {
-        return { success: true, value: [] };
+        currentResponse = { success: true, value: [] };
       }
+      currentResponse = this.reevaluateCurrentResponse(response.headers, currentResponse);
     } catch (error) {
       console.error(error);
-      return { success: false, error: error };
+      currentResponse = { success: false, error: error };
     }
+    return currentResponse;
   }
 }

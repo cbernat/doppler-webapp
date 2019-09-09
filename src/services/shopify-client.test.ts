@@ -6,7 +6,7 @@ import { DopplerLegacyUserData } from './doppler-legacy-client';
 
 const consoleError = console.error;
 
-function createHttpShopifyClient(axios: any) {
+function createHttpShopifyClient(axios: any, etag?: string, formattedResponse?: any) {
   const axiosStatic = {
     create: () => axios,
   } as AxiosStatic;
@@ -21,6 +21,8 @@ function createHttpShopifyClient(axios: any) {
     axiosStatic,
     baseUrl: 'http://shopify.test',
     connectionDataRef,
+    etag: etag ? etag : '',
+    cachedResponse: formattedResponse,
   });
   return shopifyClient;
 }
@@ -33,6 +35,7 @@ describe('HttpShopifyClient', () => {
   it('should set connected shop without list correctly', async () => {
     // Arrange
     const connectedWithoutListResponse = {
+      headers: {},
       data: [
         {
           connectedOn: '2019-08-09T19:45:43.821Z',
@@ -59,6 +62,7 @@ describe('HttpShopifyClient', () => {
   it('should set connected shop with list connected correctly', async () => {
     // Arrange
     const connectedWithListReadyResponse = {
+      headers: {},
       data: [
         {
           connectedOn: '2019-08-09T15:13:52.262Z',
@@ -92,6 +96,7 @@ describe('HttpShopifyClient', () => {
   it('should set connected shop with list connected correctly even if sync flag is bool', async () => {
     // Arrange
     const connectedWithListReadyResponseBool = {
+      headers: {},
       data: [
         {
           connectedOn: '2019-08-09T15:13:52.262Z',
@@ -125,6 +130,7 @@ describe('HttpShopifyClient', () => {
   it('should set connected shop with list connected but synchronizing contacts', async () => {
     // Arrange
     const connectedWithListSyncResponse = {
+      headers: {},
       data: [
         {
           connectedOn: '2019-08-09T15:13:52.262Z',
@@ -158,6 +164,7 @@ describe('HttpShopifyClient', () => {
   it('should set connected shop with list connected but synchronizing contacts even if sync flag is bool', async () => {
     // Arrange
     const connectedWithListSyncResponseBool = {
+      headers: {},
       data: [
         {
           connectedOn: '2019-08-09T15:13:52.262Z',
@@ -191,6 +198,7 @@ describe('HttpShopifyClient', () => {
   it('should set not connected shop', async () => {
     // Arrange
     const notConnected = {
+      headers: {},
       data: [],
     };
     const request = jest.fn(async () => notConnected);
@@ -224,5 +232,78 @@ describe('HttpShopifyClient', () => {
     expect(result).not.toBe(undefined);
     expect(result.success).toBe(false);
     expect(result.error).not.toBe(undefined);
+  });
+
+  it('should keep data from inside object when etag is equal', async () => {
+    // Arrange
+    const connectedWithoutListResponse = {
+      headers: {
+        etag: 'ddd',
+      },
+      data: [
+        {
+          connectedOn: '2019-08-09T19:45:43.821Z',
+          importedCustomersCount: '0',
+          shopName: 'dopplerdevshop.myshopify.com',
+          shopifyAccessToken: '861f44ee45f6a3affcf50477d9774d20',
+        },
+      ],
+    };
+    const request = jest.fn(async () => connectedWithoutListResponse);
+    const formattedResponse = {
+      success: true,
+      value: [
+        {
+          shopName: 'myobject.myshopify.com',
+          synchronization_date: '2019-08-09T19:45:43.821Z',
+          list: {
+            state: SubscriberListState.notAvailable,
+          },
+        },
+      ],
+    };
+    const shopifyClient = createHttpShopifyClient({ request }, 'ddd', formattedResponse);
+
+    // Act
+    const result = await shopifyClient.getShopifyData();
+    // Assert
+    expect(result.value[0].shopName).toEqual(formattedResponse.value[0].shopName);
+  });
+
+  it('should change data by new request when etag is different', async () => {
+    // Arrange
+    const connectedWithoutListResponse = {
+      headers: {
+        etag: 'newEtag',
+      },
+      data: [
+        {
+          connectedOn: '2019-08-09T19:45:43.821Z',
+          importedCustomersCount: '0',
+          shopName: 'dopplerdevshop.myshopify.com',
+          shopifyAccessToken: '861f44ee45f6a3affcf50477d9774d20',
+        },
+      ],
+    };
+    const request = jest.fn(async () => connectedWithoutListResponse);
+    const formattedResponse = {
+      success: true,
+      value: [
+        {
+          shopName: 'myobject.myshopify.com',
+          synchronization_date: '2019-08-09T19:45:43.821Z',
+          list: {
+            state: SubscriberListState.notAvailable,
+          },
+        },
+      ],
+    };
+    const shopifyClient = createHttpShopifyClient({ request }, 'currentEtag', formattedResponse);
+
+    // Act
+    const result = await shopifyClient.getShopifyData();
+    // Assert
+    expect(result.value[0].shopName).toEqual(connectedWithoutListResponse.data[0].shopName);
+    expect(result.value[0].shopName).not.toEqual(formattedResponse.value[0].shopName);
   });
 });
