@@ -112,23 +112,16 @@ const Shopify = ({ dependencies: { shopifyClient, dopplerApiClient, experimental
     delay: 20000,
     callback: async () => {
       const result = await getShopifyData();
-
-      if (!result.success) {
+      if (!result.success && !shopifyState.error) {
         setShopifyState({
           error: <FormattedHTMLMessage id="validation_messages.error_unexpected_HTML" />,
         });
-      } else if (result.value && result.value.length && !shopifyState.isLoading) {
+      } else if (result.value !== shopifyState.shops) {
         //prevent object mutation
-        setShopifyState(
-          Object.assign(shopifyState, {
-            shops: [...result.value],
-            isConnected: true,
-          }),
-        );
-      } else if (result.value && result.value.length) {
-        setShopifyState({ shops: [...result.value], isConnected: true });
-      } else {
-        setShopifyState({ shops: [] });
+        setShopifyState({
+          shops: result.value,
+          isConnected: !!result.value.length,
+        });
       }
     },
   });

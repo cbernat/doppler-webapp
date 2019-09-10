@@ -15,7 +15,7 @@ import headerDataJson from '../headerData.json';
 import { timeout } from '../utils';
 
 export class HardcodedDopplerLegacyClient implements DopplerLegacyClient {
-  public constructor(public readonly email = 'hardcoded@email.com') {}
+  public constructor(public readonly email = 'cbernat@getcs.com') {}
 
   public async login(model: LoginModel): Promise<LoginResult> {
     console.log(this.login, model);

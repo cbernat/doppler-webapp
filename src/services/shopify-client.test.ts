@@ -21,8 +21,6 @@ function createHttpShopifyClient(axios: any, etag?: string, formattedResponse?: 
     axiosStatic,
     baseUrl: 'http://shopify.test',
     connectionDataRef,
-    etag: etag ? etag : '',
-    cachedResponse: formattedResponse,
   });
   return shopifyClient;
 }
@@ -234,11 +232,11 @@ describe('HttpShopifyClient', () => {
     expect(result.error).not.toBe(undefined);
   });
 
-  it('should keep data from inside object when etag is equal', async () => {
+  it('should not change data by new request when etag is the same', async () => {
     // Arrange
     const connectedWithoutListResponse = {
       headers: {
-        etag: 'ddd',
+        etag: 'FirstEtag',
       },
       data: [
         {
@@ -249,32 +247,24 @@ describe('HttpShopifyClient', () => {
         },
       ],
     };
-    const request = jest.fn(async () => connectedWithoutListResponse);
-    const formattedResponse = {
-      success: true,
-      value: [
-        {
-          shopName: 'myobject.myshopify.com',
-          synchronization_date: '2019-08-09T19:45:43.821Z',
-          list: {
-            state: SubscriberListState.notAvailable,
-          },
-        },
-      ],
-    };
-    const shopifyClient = createHttpShopifyClient({ request }, 'ddd', formattedResponse);
+    const request = jest.fn();
+
+    const shopifyClient = createHttpShopifyClient({ request });
 
     // Act
-    const result = await shopifyClient.getShopifyData();
+    request.mockResolvedValue(connectedWithoutListResponse);
+    const result1 = await shopifyClient.getShopifyData();
+    request.mockResolvedValue({ ...connectedWithoutListResponse, headers: { etag: 'FirstEtag' } });
+    const result2 = await shopifyClient.getShopifyData();
     // Assert
-    expect(result.value[0].shopName).toEqual(formattedResponse.value[0].shopName);
+    expect(result2).toBe(result1);
   });
 
   it('should change data by new request when etag is different', async () => {
     // Arrange
     const connectedWithoutListResponse = {
       headers: {
-        etag: 'newEtag',
+        etag: 'FirstEtag',
       },
       data: [
         {
@@ -285,25 +275,16 @@ describe('HttpShopifyClient', () => {
         },
       ],
     };
-    const request = jest.fn(async () => connectedWithoutListResponse);
-    const formattedResponse = {
-      success: true,
-      value: [
-        {
-          shopName: 'myobject.myshopify.com',
-          synchronization_date: '2019-08-09T19:45:43.821Z',
-          list: {
-            state: SubscriberListState.notAvailable,
-          },
-        },
-      ],
-    };
-    const shopifyClient = createHttpShopifyClient({ request }, 'currentEtag', formattedResponse);
+    const request = jest.fn();
+
+    const shopifyClient = createHttpShopifyClient({ request });
 
     // Act
-    const result = await shopifyClient.getShopifyData();
+    request.mockResolvedValue(connectedWithoutListResponse);
+    const result1 = await shopifyClient.getShopifyData();
+    request.mockResolvedValue({ ...connectedWithoutListResponse, headers: { etag: 'SecondEtag' } });
+    const result2 = await shopifyClient.getShopifyData();
     // Assert
-    expect(result.value[0].shopName).toEqual(connectedWithoutListResponse.data[0].shopName);
-    expect(result.value[0].shopName).not.toEqual(formattedResponse.value[0].shopName);
+    expect(result2).not.toBe(result1);
   });
 });
