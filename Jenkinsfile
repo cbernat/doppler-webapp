@@ -1,6 +1,9 @@
 pipeline {
     agent any
     stages {
+        stage('Abort') {
+            input('Continue build?')
+        }
         stage('Restore') {
             steps {
                 sh 'docker build --target restore -f Dockerfile.swarm .'
