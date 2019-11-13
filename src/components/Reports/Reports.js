@@ -95,16 +95,7 @@ const Reports = ({ dependencies: { datahubClient } }) => {
                 </BoxMessage>
               ) : null}
               <div className="dp-rowflex">
-                <div className="col-lg-6 col-md-6 col-sm-12 m-b-24">
-                  <ReportsBox
-                    domainName={state.domainSelected.name}
-                    periodSelectedDays={state.periodSelectedDays}
-                    dateTo={state.dateTo}
-                    dateFrom={state.dateFrom}
-                    today={state.dailyView}
-                    emailFilter={'without_email'}
-                  />
-                </div>
+                <div className="col-lg-6 col-md-6 col-sm-12 m-b-24"></div>
                 <div className="col-lg-6 col-md-6 col-sm-12 m-b-24">
                   <ReportsBox
                     domainName={state.domainSelected.name}

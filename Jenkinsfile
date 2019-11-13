@@ -6,6 +6,11 @@ pipeline {
                 input('Continue build?')
             }
         }
+        stage('Restore') {
+            steps {
+                sh 'docker build --target restore -f Dockerfile.swarm .'
+            }
+        }
         stage('Test') {
             steps {
                 sh 'docker build --target test -f Dockerfile.swarm .'
