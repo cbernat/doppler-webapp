@@ -26,5 +26,5 @@ docker run --rm \
     node:12.14.1 \
     /bin/sh -c "\
         yarn \
-        && yarn semantic-release \
+        && yarn semantic-release --debug \
     "
