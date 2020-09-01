@@ -44,8 +44,6 @@ function getPlanUrl(planId, advancedPay, promoCode, _) {
 const ChangePlan = ({ location }) => {
   const promoCode = extractParameter(location, queryString.parse, 'promo-code') || '';
   const advancedPay = extractParameter(location, queryString.parse, 'advanced-pay') || 0;
-  // TODO: remove planId, it just for testing right now
-  const planId = parseInt(extractParameter(location, queryString.parse, 'planId')) || 0;
   const intl = useIntl();
   const _ = (id, values) => intl.formatMessage({ id: id }, values);
 
