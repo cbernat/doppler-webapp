@@ -1,16 +1,16 @@
 import { HardcodedDopplerLegacyClient } from './doppler-legacy-client.doubles';
-import { DopplerPlanClient } from './doppler-plan-client';
+import { PlanService } from './plan-service';
 
 describe('Doppler plan client', () => {
   it('should validate if call to get data only once', async () => {
     // Arrange
     const dopplerLegacyClient = new HardcodedDopplerLegacyClient();
-    const dopplerPlanClient = new DopplerPlanClient({ dopplerLegacyClient });
+    const planService = new PlanService({ dopplerLegacyClient });
     const spyGetAllPlans = jest.spyOn(dopplerLegacyClient, 'getAllPlans');
 
     // Act
-    await dopplerPlanClient.getPlanData();
-    await dopplerPlanClient.getPlanData();
+    await planService.ensurePlanListLoaded();
+    await planService.ensurePlanListLoaded();
 
     // Assert
     expect(spyGetAllPlans).toHaveBeenCalledTimes(1);
