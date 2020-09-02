@@ -3,13 +3,7 @@ import { Property } from 'csstype';
 import { Result, EmptyResult, EmptyResultWithoutExpectedErrors } from '../doppler-types';
 import axiosRetry from 'axios-retry';
 import { addLogEntry } from '../utils';
-import {
-  pathTypeByType,
-  planTypeByIdUserType,
-  paymentTypeByPaymentMethod,
-  monthPlanByBillingCycle,
-  AdvancePayOptions,
-} from '../services/plan-hierarchy';
+import { AdvancePayOptions, PaymentType, PlanType, BillingCycle, PathType } from '../doppler-types';
 
 export interface DopplerLegacyClient {
   getUserData(): Promise<DopplerLegacyUserData>;
@@ -222,15 +216,45 @@ export interface DopplerLegacyUserData {
   datahubCustomerId: string | null;
   features: DopplerFeatures;
 }
+
+//TODO: remove this type in favor of plan hierarchy
 export interface DopplerLegacyClientTypePlan {
   IdUserTypePlan: number;
   Description: string;
 }
 
+//TODO: remove this type in favor of plan hierarchy
 export interface DopplerLegacyUpgradePlanContactModel {
   Detail: string;
   IdClientTypePlanSelected: number;
 }
+
+// dictionaries
+export const planTypeByIdUserType: { [idUserType: number]: PlanType } = {
+  1: 'free',
+  2: 'monthly-deliveries',
+  3: 'prepaid',
+  4: 'subscribers',
+};
+
+export const pathTypeByType: { [type: number]: PathType } = {
+  1: 'free',
+  2: 'standard',
+  3: 'plus',
+};
+
+export const paymentTypeByPaymentMethod: { [paymentMehtod: number]: PaymentType } = {
+  1: 'CC',
+  3: 'transfer',
+};
+
+export const monthPlanByBillingCycle: { [paymentMehtod: number]: BillingCycle } = {
+  1: 'monthly',
+  3: 'quarterly',
+  6: 'half-yearly',
+  12: 'yearly',
+};
+// end dictionaries
 /* #endregion */
 
 /* #region DopplerLegacyUserData mappings */
