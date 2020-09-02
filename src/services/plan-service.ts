@@ -10,7 +10,7 @@ import {
   PathType,
 } from '../doppler-types';
 
-export class DopplerPlanClient implements PlanHierarchy {
+export class PlanService implements PlanHierarchy {
   private PlanList: Plan[] = [];
   private readonly dopplerLegacyClient: DopplerLegacyClient;
 
@@ -18,7 +18,7 @@ export class DopplerPlanClient implements PlanHierarchy {
     this.dopplerLegacyClient = dopplerLegacyClient;
   }
 
-  async getPlanData(): Promise<Plan[]> {
+  async ensurePlanListLoaded(): Promise<Plan[]> {
     return this.PlanList.length
       ? this.PlanList
       : (this.PlanList = await this.dopplerLegacyClient.getAllPlans());
