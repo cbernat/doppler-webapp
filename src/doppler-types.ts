@@ -25,3 +25,74 @@ export interface AdvancePayOptions {
   discountPercentage: number;
   billingCycle: BillingCycle;
 }
+
+export type Features =
+  | 'emailParameter'
+  | 'cancelCampaign'
+  | 'siteTracking'
+  | 'smartCampaigns'
+  | 'shippingLimit';
+
+export interface SubscribersLimitedPlan {
+  type: 'subscribers';
+  id: number;
+  name: string;
+  subscriberLimit: number;
+  fee: number;
+  featureSet: 'standard' | 'plus';
+  featureList: Features[];
+  billingCycleDetails: AdvancePayOptions[];
+}
+
+export interface MonthlyRenewalDeliveriesPlan {
+  type: 'monthly-deliveries';
+  id: number;
+  name: string;
+  emailsByMonth: number;
+  extraEmailPrice: number;
+  fee: number;
+  featureSet: 'standard' | 'plus';
+  featureList: Features[];
+  billingCycleDetails: AdvancePayOptions[];
+}
+
+export interface PrepaidPack {
+  type: 'prepaid';
+  id: number;
+  name: string;
+  credits: number;
+  price: number;
+}
+
+export interface FreePlan {
+  type: 'free';
+  subscriberLimit: 500;
+}
+
+export interface FreePath {
+  type: 'free';
+  actual: boolean;
+  deadend: true;
+}
+
+export type Plan = SubscribersLimitedPlan | FreePlan | PrepaidPack | MonthlyRenewalDeliveriesPlan;
+
+export interface StandardPath {
+  type: 'standard';
+  actual: boolean;
+  minimumFee: number;
+  deadend: boolean;
+}
+
+export interface PlusPath {
+  type: 'plus';
+  actual: boolean;
+  minimumFee: number;
+  deadend: boolean;
+}
+
+export interface AgenciesPath {
+  type: 'agencies';
+  actual: boolean;
+  deadend: true;
+}

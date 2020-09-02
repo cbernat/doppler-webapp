@@ -306,7 +306,6 @@ function sanitizePlans(json: any): any {
 function mapAdvancePay(json: any): AdvancePayOptions {
   return {
     id: json.IdDiscountPlan,
-    idPlan: json.IdUserTypePlan,
     paymentType: paymentTypeByPaymentMethod[json.IdPaymentMethod],
     discountPercentage: json.DiscountPlanFee,
     billingCycle: monthPlanByBillingCycle[json.MonthPlan],
