@@ -1,10 +1,4 @@
-export interface AdvancePayOptions {
-  id: number;
-  idPlan: number;
-  paymentType: 'CC' | 'transfer';
-  discountPercentage: number;
-  billingCycle: BillingCycle;
-}
+import { AdvancePayOptions, PlanType, PathType } from '../doppler-types';
 export type Features =
   | 'emailParameter'
   | 'cancelCampaign'
@@ -48,13 +42,13 @@ export interface FreePlan {
   subscriberLimit: 500;
 }
 
-export type Plan = SubscribersLimitedPlan | FreePlan | PrepaidPack | MonthlyRenewalDeliveriesPlan;
-
 export interface FreePath {
   type: 'free';
   actual: boolean;
   deadend: true;
 }
+
+export type Plan = SubscribersLimitedPlan | FreePlan | PrepaidPack | MonthlyRenewalDeliveriesPlan;
 
 export interface StandardPath {
   type: 'standard';
@@ -76,45 +70,10 @@ export interface AgenciesPath {
   deadend: true;
 }
 
-export type PathType = 'free' | 'standard' | 'plus' | 'agencies';
-
-export type PlanType = 'free' | 'prepaid' | 'monthly-deliveries' | 'subscribers';
-
-export type PaymentType = 'CC' | 'transfer';
-
-export type BillingCycle = 'monthly' | 'quarterly' | 'half-yearly' | 'yearly';
-
-// dictionaries
-export const planTypeByIdUserType: { [idUserType: number]: PlanType } = {
-  1: 'free',
-  2: 'monthly-deliveries',
-  3: 'prepaid',
-  4: 'subscribers',
-};
-
-export const pathTypeByType: { [type: number]: PathType } = {
-  1: 'free',
-  2: 'standard',
-  3: 'plus',
-};
-
-export const paymentTypeByPaymentMethod: { [paymentMehtod: number]: PaymentType } = {
-  1: 'CC',
-  3: 'transfer',
-};
-
-export const monthPlanByBillingCycle: { [paymentMehtod: number]: BillingCycle } = {
-  1: 'monthly',
-  3: 'quarterly',
-  6: 'half-yearly',
-  12: 'yearly',
-};
-// end dictionaries
-
 export interface PlanHierarchy {
   //TODO: plan hierarchy should be implemented as singleton service
 
-  getPaths(userPlan: Plan): (FreePath | StandardPath | PlusPath | AgenciesPath)[];
+  getPaths(userPlan: PlanType): (FreePath | StandardPath | PlusPath | AgenciesPath)[];
   // current plan free: FreePath, StandardPath, PlusPath, AgenciesPath
   // current plan by credits: StandardPath, PlusPath, AgenciesPath
   // current plan standard: StandardPath, PlusPath, AgenciesPath

@@ -10,3 +10,18 @@ export type EmptyResult<TError> = { success: true } | ErrorResult<TError>;
 // Duplicate identifier 'EmptyResult'.ts(2300)
 // TODO: Research how to fix it and rename EmptyResultWithoutExpectedErrors as EmptyResult
 export type EmptyResultWithoutExpectedErrors = { success: true } | UnexpectedError;
+
+export type PathType = 'free' | 'standard' | 'plus' | 'agencies';
+
+export type PlanType = 'free' | 'prepaid' | 'monthly-deliveries' | 'subscribers';
+
+export type PaymentType = 'CC' | 'transfer';
+
+export type BillingCycle = 'monthly' | 'quarterly' | 'half-yearly' | 'yearly';
+
+export interface AdvancePayOptions {
+  id: number;
+  paymentType: 'CC' | 'transfer';
+  discountPercentage: number;
+  billingCycle: BillingCycle;
+}
