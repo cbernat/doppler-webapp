@@ -19,6 +19,8 @@ export type PaymentType = 'CC' | 'transfer';
 
 export type BillingCycle = 'monthly' | 'quarterly' | 'half-yearly' | 'yearly';
 
+export type Path = FreePath | StandardPath | PlusPath | AgenciesPath;
+
 export interface AdvancePayOptions {
   id: number;
   paymentType: 'CC' | 'transfer';
