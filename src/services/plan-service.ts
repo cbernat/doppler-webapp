@@ -7,10 +7,11 @@ import {
   PlanType,
   Plan,
   PathType,
+  Path
 } from '../doppler-types';
 
 export interface PlanHierarchy {
-  getPaths(userPlan: Plan): (FreePath | StandardPath | PlusPath | AgenciesPath)[];
+  getPaths(userPlan: Plan): Promise<Path[]>;
   // current plan free: FreePath, StandardPath, PlusPath, AgenciesPath
   // current plan by credits: StandardPath, PlusPath, AgenciesPath
   // current plan standard: StandardPath, PlusPath, AgenciesPath
@@ -48,29 +49,34 @@ export class PlanService implements PlanHierarchy {
       : (this.PlanList = await this.dopplerLegacyClient.getAllPlans());
   }
 
-  private getMinimumFee(path:PathType):number{
+  private getMinimumFee(planList: Plan[], path:PathType):number{
+    //find all pathType plan, and get prices ordered
+    return 0;
     throw new Error('Not implemented');
   }
 
-  private isHigherPlan(plan:Plan):boolean {
+  private isHigherPlan(planList: Plan[], plan:Plan):boolean {
+    return false;
     throw new Error('Not implemented');
   }
 
-  private getMinimumFeePrepaid(): number {
+  private getMinimumFeePrepaid(planList: Plan[]): number {
+    return 15;
     throw new Error('Not implemented');
   }
 
-  getPaths(userPlan: Plan): (FreePath | StandardPath | PlusPath | AgenciesPath)[] {
+  async getPaths(userPlan: Plan): Promise<Path[]> {
+    const planList = await this.ensurePlanListLoaded();
     const standardPath: StandardPath = {
       type: 'standard',
       actual: false,
-      minimumFee: this.getMinimumFee('standard'),
+      minimumFee: this.getMinimumFee(planList,'standard'),
       deadend: false,
     };
     const plusPath: PlusPath = {
       type: 'plus',
       actual: false,
-      minimumFee: this.getMinimumFee('plus'),
+      minimumFee: this.getMinimumFee(planList,'plus'),
       deadend: false,
     };
     const agenciesPath: AgenciesPath = {
@@ -78,7 +84,7 @@ export class PlanService implements PlanHierarchy {
       actual: false,
       deadend: true,
     };
-    const currentDeadend = this.isHigherPlan(userPlan); 
+    const currentDeadend = this.isHigherPlan(planList,userPlan); 
     switch(userPlan.type){
       case('free'):
         const freePath: FreePath = {
@@ -91,7 +97,7 @@ export class PlanService implements PlanHierarchy {
         const currentStandard: StandardPath = {
           type: 'standard',
           actual: true,
-          minimumFee: this.getMinimumFeePrepaid(), //minimum fee always
+          minimumFee: this.getMinimumFeePrepaid(planList), //minimum fee always
           deadend: false, // if we have more plans this is true for prepaid always
         };
         return [currentStandard, agenciesPath];
