@@ -79,6 +79,8 @@ export interface FreePath {
 
 export type Plan = SubscribersLimitedPlan | FreePlan | PrepaidPack | MonthlyRenewalDeliveriesPlan;
 
+export type FeaturedPlan = SubscribersLimitedPlan | MonthlyRenewalDeliveriesPlan;
+
 export interface StandardPath {
   type: 'standard';
   actual: boolean;

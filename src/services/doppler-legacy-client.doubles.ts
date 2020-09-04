@@ -48,7 +48,7 @@ export class HardcodedDopplerLegacyClient implements DopplerLegacyClient {
     console.log('GetAllPlans');
     await timeout(1500);
     return [
-      { type: 'prepaid', id: 1, name: '1500-CREDITS', credits: 1500, price: 5303 },
+      { type: 'prepaid', id: 1, name: '1500-CREDITS', credits: 1500, price: 15 },
       { type: 'prepaid', id: 2, name: '2500-CREDITS', credits: 2500, price: 45 },
       { type: 'prepaid', id: 3, name: '5000-CREDITS', credits: 5000, price: 85 },
       { type: 'prepaid', id: 4, name: '10000-CREDITS', credits: 10000, price: 120 },
@@ -90,7 +90,7 @@ export class HardcodedDopplerLegacyClient implements DopplerLegacyClient {
         name: '700000-EMAILS-PLUS',
         emailsByMonth: 700000,
         extraEmailPrice: 0.00087,
-        fee: 610,
+        fee: 810,
         featureSet: 'plus',
         features: ['emailParameter'],
         billingCycleDetails: [
