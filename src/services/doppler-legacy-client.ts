@@ -1,15 +1,8 @@
 import { AxiosInstance, AxiosStatic, AxiosError } from 'axios';
 import { Property } from 'csstype';
-import {
-  Result,
-  EmptyResult,
-  EmptyResultWithoutExpectedErrors,
-  SubscribersLimitedPlan,
-  MonthlyRenewalDeliveriesPlan,
-  PrepaidPack,
-} from '../doppler-types';
+import { Result, EmptyResult, EmptyResultWithoutExpectedErrors } from '../doppler-types';
 import axiosRetry from 'axios-retry';
-import { addLogEntry } from '../utils';
+import { addLogEntry, getPlanFee } from '../utils';
 import {
   AdvancePayOptions,
   PaymentType,
@@ -327,12 +320,6 @@ function compareByPlanType(left: Plan, right: Plan): number {
   )
     return 1;
   return 0 || compareByFee(left, right);
-}
-
-function getPlanFee(plan: Plan): number {
-  return plan.type === 'prepaid'
-    ? (plan as PrepaidPack).price
-    : (plan as MonthlyRenewalDeliveriesPlan | SubscribersLimitedPlan).fee;
 }
 
 function compareByFee(left: Plan, right: Plan): number {
