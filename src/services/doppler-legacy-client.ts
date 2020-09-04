@@ -1,9 +1,23 @@
 import { AxiosInstance, AxiosStatic, AxiosError } from 'axios';
 import { Property } from 'csstype';
-import { Result, EmptyResult, EmptyResultWithoutExpectedErrors, SubscribersLimitedPlan, MonthlyRenewalDeliveriesPlan, PrepaidPack } from '../doppler-types';
+import {
+  Result,
+  EmptyResult,
+  EmptyResultWithoutExpectedErrors,
+  SubscribersLimitedPlan,
+  MonthlyRenewalDeliveriesPlan,
+  PrepaidPack,
+} from '../doppler-types';
 import axiosRetry from 'axios-retry';
 import { addLogEntry } from '../utils';
-import { AdvancePayOptions, PaymentType, PlanType, BillingCycle, PathType, Plan } from '../doppler-types';
+import {
+  AdvancePayOptions,
+  PaymentType,
+  PlanType,
+  BillingCycle,
+  PathType,
+  Plan,
+} from '../doppler-types';
 
 export interface DopplerLegacyClient {
   getUserData(): Promise<DopplerLegacyUserData>;
@@ -299,15 +313,31 @@ function mapNavMainEntry(json: any): MainNavEntry {
   };
 }
 
-function compareByPlanType(left:Plan, right:Plan): number {
-  if ((left.type === 'prepaid' && right.type === 'monthly-deliveries') 
-  || (left.type === 'prepaid' && right.type === 'subscribers')
-  || (left.type === 'subscribers' && right.type === 'monthly-deliveries'))
-  return -1;
-  if ((left.type === 'monthly-deliveries' && right.type === 'prepaid') 
-  || (left.type === 'subscribers' && right.type === 'prepaid')
-  || (left.type === 'monthly-deliveries' && right.type === 'subscribers'))
-  return 1;
+function compareByPlanType(left: Plan, right: Plan): number {
+  if (
+    (left.type === 'prepaid' && right.type === 'monthly-deliveries') ||
+    (left.type === 'prepaid' && right.type === 'subscribers') ||
+    (left.type === 'subscribers' && right.type === 'monthly-deliveries')
+  )
+    return -1;
+  if (
+    (left.type === 'monthly-deliveries' && right.type === 'prepaid') ||
+    (left.type === 'subscribers' && right.type === 'prepaid') ||
+    (left.type === 'monthly-deliveries' && right.type === 'subscribers')
+  )
+    return 1;
+  return 0 || compareByFee(left, right);
+}
+
+function getPlanFee(plan: Plan): number {
+  return plan.type === 'prepaid'
+    ? (plan as PrepaidPack).price
+    : (plan as MonthlyRenewalDeliveriesPlan | SubscribersLimitedPlan).fee;
+}
+
+function compareByFee(left: Plan, right: Plan): number {
+  if (getPlanFee(left) < getPlanFee(right)) return -1;
+  if (getPlanFee(left) > getPlanFee(right)) return 1;
   return 0;
 }
 
