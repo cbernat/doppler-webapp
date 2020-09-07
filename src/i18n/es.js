@@ -48,6 +48,7 @@ export default {
     since: 'Desde',
     site_tracking: 'Comportamiento en Sitio',
     smart_campaigns: 'Envíos Inteligentes',
+    title: 'Planes a la medida de tu negocio',
     until_x_subscribers: `Hasta {subscribers} Contactos.`,
   },
   common: {
