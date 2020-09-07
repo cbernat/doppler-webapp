@@ -34,6 +34,8 @@ const urlMasterSubscriber = `${urlDopplerLegacy}/Lists/MasterSubscriber/`;
 
 export default {
   change_plan: {
+    agencies_icon: `https://cdn.fromdoppler.com/doppler-ui-library/${dopplerUiLibraryVersion}/img/icono-agencias.svg`,
+    ask_demo: 'Solicita una demo',
     all_of_plan: `Todo lo de {plan} más:`,
     calculate_price: 'Calcular Precio',
     cancel_campaign: 'Cancelar Campaña',
