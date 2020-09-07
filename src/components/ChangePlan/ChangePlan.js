@@ -48,8 +48,6 @@ const ChangePlan = ({ location }) => {
   const _ = (id, values) => intl.formatMessage({ id: id }, values);
 
   const [isFeaturesVisible, setIsFeaturesVisible] = useState(false);
-  // Allow preselect by email or contacts
-  const selectedType = extractParameter(location, queryString.parse, 'selected-type') || '';
   const plans = getPlans();
 
   return (
@@ -59,17 +57,13 @@ const ChangePlan = ({ location }) => {
         <title>Compra un plan</title>
       </Helmet>
       <div className="p-t-54 p-b-54" style={{ backgroundColor: '#f6f6f6', flex: '1' }}>
-        {selectedType.length ? (
-          <section className="dp-container">
-            <div className="dp-rowflex">
-              <div className="dp-align-center">
-                <h1>{_('change_plan.selected_type') + selectedType}</h1>
-              </div>{' '}
+        <section className="dp-container">
+          <div className="dp-rowflex">
+            <div className="dp-align-center">
+              <h1>{_('change_plan.title')}</h1>
             </div>{' '}
-          </section>
-        ) : (
-          ''
-        )}
+          </div>{' '}
+        </section>
         <section className="dp-container">
           <div className="dp-rowflex">
             <div className="dp-align-center p-t-30 p-b-30">

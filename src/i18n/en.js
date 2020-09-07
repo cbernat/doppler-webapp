@@ -37,7 +37,7 @@ export default {
     all_of_plan: `Everything from {plan} Plus:`,
     calculate_price: 'Calculate Price',
     cancel_campaign: 'Cancel Campaign',
-    compare_features: 'Comparare Features',
+    compare_features: 'Compare Features',
     description: 'Do you send periodically or one newsletter per month?',
     email_parameter: 'Email parameter',
     features: 'Features:',
@@ -48,6 +48,7 @@ export default {
     since: 'Since',
     site_tracking: 'On-Site Tracking',
     smart_campaigns: 'Smart Send Out',
+    title: 'Plans sized up for your business',
     until_x_subscribers: `Until {subscribers} Contacts.`,
   },
   common: {
