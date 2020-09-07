@@ -77,7 +77,7 @@ export class PlanService implements PlanHierarchy {
     return {
       type: 'free',
       actual: true,
-      deadend: true,
+      deadEnd: true,
     };
   }
 
@@ -85,7 +85,7 @@ export class PlanService implements PlanHierarchy {
     return {
       type: 'agencies',
       actual: false,
-      deadend: true,
+      deadEnd: true,
     };
   }
 
@@ -94,7 +94,7 @@ export class PlanService implements PlanHierarchy {
       type: 'plus',
       actual: actual,
       minimumFee: minimumFee,
-      deadend: deadEnd,
+      deadEnd: deadEnd,
     };
   }
 
@@ -103,7 +103,7 @@ export class PlanService implements PlanHierarchy {
       type: 'standard',
       actual: actual,
       minimumFee: minimumFee,
-      deadend: deadEnd,
+      deadEnd: deadEnd,
     };
   }
 

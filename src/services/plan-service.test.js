@@ -30,7 +30,7 @@ describe('Doppler plan client', () => {
     // Assert
     expect(paths.length).toBe(4);
     expect(paths[0].actual).toBe(true);
-    expect(paths[0].deadend).toBe(true);
+    expect(paths[0].deadEnd).toBe(true);
   });
 
   it('should get correct path for a current prepaid user', async () => {
@@ -43,7 +43,7 @@ describe('Doppler plan client', () => {
     // Assert
     expect(paths.length).toBe(3);
     expect(paths[0].actual).toBe(true);
-    expect(paths[0].deadend).toBe(false);
+    expect(paths[0].deadEnd).toBe(false);
   });
 
   it('should get correct path for a current subscriber standard user', async () => {
@@ -67,7 +67,7 @@ describe('Doppler plan client', () => {
     // Assert
     expect(paths.length).toBe(3);
     expect(paths[0].actual).toBe(true);
-    expect(paths[0].deadend).toBe(false);
+    expect(paths[0].deadEnd).toBe(false);
   });
 
   it('should get correct path for a current subscriber plus user', async () => {
@@ -91,7 +91,7 @@ describe('Doppler plan client', () => {
     // Assert
     expect(paths.length).toBe(2);
     expect(paths[0].actual).toBe(true);
-    expect(paths[0].deadend).toBe(false);
+    expect(paths[0].deadEnd).toBe(false);
     expect(paths[0].minimumFee).toBe(currentPlan.fee);
   });
 });
