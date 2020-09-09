@@ -256,10 +256,16 @@ export const getPaths = (userPlan: Plan, planList: Plan[]): Path[] => {
           minEmailsByMonth: userPlan.emailsByMonth,
         })
       : userPlan.type == 'subscribers'
-      ? getUpgradeSubscribersPlans(planList, {
-          minFee: userPlan.fee,
-          minSubscriberLimit: userPlan.subscriberLimit,
-        })
+        ? [
+            ...getUpgradeSubscribersPlans(planList, {
+              minFee: userPlan.fee,
+              minSubscriberLimit: userPlan.subscriberLimit,
+            }),
+            ...getUpgradeMonthlyPlans(planList, {
+              minFee: userPlan.fee,
+              minEmailsByMonth: 0,
+            }),
+          ]
       : [];
 
   const potentialAndCurrentPlans = [userPlan, ...potentialUpgradePlans, _agencyPlan];
