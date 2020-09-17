@@ -48,17 +48,21 @@ export default {
     description_plus: 'Advanced features for professionals with custom needs.',
     description_standard: 'Try our plans that best fit to your needs, monthly or prepaids.',
     email_parameter: 'Email parameter',
-    features_HTML_agencies: `<option>Manage several accounts</option>
+    features_HTML_agencies: `
+    <option>Manage several accounts</option>
     <option>Manage access to different accounts</option>
     <option>Manage roles</option>`,
-    features_HTML_free: `<option>Customer Support</option>
+    features_HTML_free: `
+    <option>Customer Support</option>
     <option>Regular Campaigns</option>
     <option>Basic Automation Campaigns</option>`,
-    features_HTML_plus: `<star>VIP Customer Support</star>
+    features_HTML_plus: `
+    <star>VIP Customer Support</star>
     <newOption>Stop Campaigns</newOption>
     <option>Custom domains for your Landing Pages</option>
     <newBigData>Subject suggestion</newBigData>`,
-    features_HTML_standard: `<option>Doppler API access</option>
+    features_HTML_standard: `
+    <option>Doppler API access</option>
     <option>Site Behaviour Automation Campaigns</option>
     <option>Custom signature Campaigns</option>`,
     features_title_plus: 'All in standard and:',
