@@ -246,7 +246,7 @@ export const planTypeByIdUserType: { [idUserType: number]: PlanType } = {
   4: 'subscribers',
   5: 'agencies',
   6: 'agencies',
-  7: 'demo',
+  7: 'free',
   8: 'agencies',
 };
 
