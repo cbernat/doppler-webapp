@@ -68,14 +68,12 @@ export interface PrepaidPack {
 }
 
 export interface FreePlan {
-  id: number;
   type: 'free';
   subscriberLimit: number;
   featureSet: 'free';
 }
 
 export interface AgencyPlan {
-  id: number;
   type: 'agency';
   featureSet: 'agency';
 }

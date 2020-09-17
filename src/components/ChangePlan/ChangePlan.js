@@ -98,14 +98,14 @@ const ChangePlan = ({ location, dependencies: { planService, appSessionRef } }) 
     isFeaturesVisible: false,
   });
   useEffect(() => {
-    const mapCurrentPlan = (plan, planList) => {
+    const mapCurrentPlan = (sessionPlan, planList) => {
       const exclusivePlan = { type: 'exclusive' };
-      switch (plan.planType) {
+      switch (sessionPlan.planType) {
         case 'subscribers':
         case 'monthly-deliveries':
           // for subscribers and monthly plan will be exclusive until id plan is deployed in doppler
-          const monthlyPlan = planService.getPlanById(plan.idPlan, planList);
-          return monthlyPlan ? monthlyPlan : exclusivePlan; //if not found it is exclusive plan
+          const monthlyPlan = planService.getPlanBySessionPlanId(sessionPlan.idPlan, planList);
+          return monthlyPlan ? monthlyPlan : exclusivePlan;
         case 'prepaid':
           return planService.getCheapestPrepaidPlan(planList);
         case 'agencies':

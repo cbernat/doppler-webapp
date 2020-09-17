@@ -158,7 +158,6 @@ const getPlusPathOrEmpty = (userPlan: Plan, planList: Plan[]): PlusPath[] => {
 };
 
 const _agencyPlan: AgencyPlan = {
-  id: 0,
   type: 'agency',
   featureSet: 'agency',
 };
@@ -263,8 +262,12 @@ export class PlanService implements PlanHierarchy {
     return potentialUpgradePlansFilteredByPathAndTypeSorted;
   }
 
-  getPlanById(id: number, planList: Plan[]) {
-    return planList.find((plan) => plan.id === id);
+  getPlanBySessionPlanId(id: number, planList: Plan[]) {
+    return (planList as (
+      | PrepaidPack
+      | MonthlyRenewalDeliveriesPlan
+      | SubscribersLimitedPlan
+    )[]).find((plan) => plan.id === id);
   }
 
   getCheapestPrepaidPlan(planList: Plan[]) {
