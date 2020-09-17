@@ -16,29 +16,32 @@ const BulletOptions = ({ type }) => {
   const intl = useIntl();
   const _ = (id, values) => intl.formatMessage({ id: id }, values);
 
-  const starBullet = () => {
-    return (
-      <span className="dp-icostar">
-        <img alt="star icon" src={_('common.ui_library_image', { imageUrl: 'ico-star.svg' })} />
-      </span>
-    );
-  };
-
-  const newLabel = () => {
-    return dopplerLabel(_('change_plan.new_label'));
-  };
-
   return (
     <FormattedMessage
       id={'change_plan.features_HTML_' + type}
       values={{
-        option: (chunks) => optionItem(chunks, basicBullet()),
-        star: (chunks) => optionItem(chunks, starBullet()),
-        newOption: (chunks) => optionItem(chunks, basicBullet(), newLabel()),
-        newStar: (chunks) => optionItem(chunks, starBullet(), newLabel()),
-        bigData: (chunks) => optionItem(chunks, bigDataBullet()),
-        newBigData: (chunks) =>
-          optionItem(chunks, bigDataBullet(_('change_plan.big_data_tooltip')), newLabel()),
+        option: (chunks) => <OptionItem bullet={<BasicBullet />}>{chunks}</OptionItem>,
+        star: (chunks) => <OptionItem bullet={<StarBullet />}>{chunks}</OptionItem>,
+        newOption: (chunks) => (
+          <OptionItem bullet={<BasicBullet />}>
+            {chunks} <NewLabel>{_('change_plan.new_label')}</NewLabel>
+          </OptionItem>
+        ),
+        newStar: (chunks) => (
+          <OptionItem bullet={<StarBullet />}>
+            {chunks} <NewLabel>{_('change_plan.new_label')}</NewLabel>
+          </OptionItem>
+        ),
+        bigData: (chunks) => (
+          <OptionItem bullet={<BigDataBullet>{_('change_plan.big_data_tooltip')}</BigDataBullet>}>
+            {chunks}
+          </OptionItem>
+        ),
+        newBigData: (chunks) => (
+          <OptionItem bullet={<BigDataBullet>{_('change_plan.big_data_tooltip')}</BigDataBullet>}>
+            {chunks} <NewLabel>{_('change_plan.new_label')}</NewLabel>
+          </OptionItem>
+        ),
       }}
     >
       {(txt) => <ul className="dp-list-detail">{txt}</ul>}
@@ -46,31 +49,39 @@ const BulletOptions = ({ type }) => {
   );
 };
 
-const optionItem = (chunks, bullet, label) => {
+const StarBullet = () => {
+  const intl = useIntl();
+  const _ = (id, values) => intl.formatMessage({ id: id }, values);
+  return (
+    <span className="dp-icostar">
+      <img alt="star icon" src={_('common.ui_library_image', { imageUrl: 'ico-star.svg' })} />
+    </span>
+  );
+};
+
+const OptionItem = ({ children, bullet }) => {
   return (
     <li>
       {bullet}
-      <span>
-        {chunks} {label}
-      </span>
+      <span>{children}</span>
     </li>
   );
 };
 
-const basicBullet = () => {
+const BasicBullet = () => {
   return <span className="dp-icodot">.</span>;
 };
 
-const dopplerLabel = (text) => {
-  return <span className="dp-new">{text}</span>;
+const NewLabel = ({ children }) => {
+  return <span className="dp-new">{children}</span>;
 };
 
-const bigDataBullet = (tooltipText) => {
+const BigDataBullet = ({ children }) => {
   return (
     <div className="dp-tooltip-container">
       <span className="dp-icobd">BD</span>
       <div className="dp-tooltip-block">
-        <span className="tooltiptext">{tooltipText}</span>
+        <span className="tooltiptext">{children}</span>
       </div>
     </div>
   );
@@ -90,27 +101,24 @@ const ChangePlan = ({ location, dependencies: { planService, appSessionRef } }) 
     const mapCurrentPlan = (plan, planList) => {
       const exclusivePlan = { type: 'exclusive' };
       switch (plan.planType) {
-        case 'demo':
-        case 'free':
-          return {
-            type: 'free',
-            subscriberLimit: 500,
-            featureSet: 'free',
-          };
         case 'subscribers':
         case 'monthly-deliveries':
           // for subscribers and monthly plan will be exclusive until id plan is deployed in doppler
           const monthlyPlan = planService.getPlanById(plan.idPlan, planList);
           return monthlyPlan ? monthlyPlan : exclusivePlan; //if not found it is exclusive plan
         case 'prepaid':
-          return planService.getCheapestPrepaidPlan(plan.maxSubscribers, 'standard', planList);
+          return planService.getCheapestPrepaidPlan(planList);
         case 'agencies':
           return {
             type: 'agency',
             featureSet: 'agency',
           };
-        default: {
-        }
+        default:
+          return {
+            type: 'free',
+            subscriberLimit: 500,
+            featureSet: 'free',
+          };
       }
     };
     const fetchData = async () => {
@@ -178,7 +186,19 @@ const ChangePlan = ({ location, dependencies: { planService, appSessionRef } }) 
                     ) : (
                       ''
                     )}
-                    {path.current ? (
+                    {path.type === 'agencies' ? (
+                      <>
+                        <img
+                          alt="agency-icon"
+                          className="dp-price"
+                          style={{ width: '80px' }}
+                          src={_('change_plan.agencies_icon')}
+                        ></img>
+                        <CardAction url={getPlanUrl('18', advancedPay, promoCode, _)}>
+                          {_('change_plan.ask_demo')}
+                        </CardAction>
+                      </>
+                    ) : path.current ? (
                       path.deadEnd ? (
                         <div className="dp-cta-plan">
                           <span className="dp-current-plan"> {_('change_plan.current_plan')} </span>
@@ -194,18 +214,6 @@ const ChangePlan = ({ location, dependencies: { planService, appSessionRef } }) 
                           <span className="dp-what-plan">{_('change_plan.current_plan')}</span>
                         </>
                       )
-                    ) : path.type === 'agencies' ? (
-                      <>
-                        <img
-                          alt="agency-icon"
-                          className="dp-price"
-                          style={{ width: '80px' }}
-                          src={_('change_plan.agencies_icon')}
-                        ></img>
-                        <CardAction url={getPlanUrl('18', advancedPay, promoCode, _)}>
-                          {_('change_plan.ask_demo')}
-                        </CardAction>
-                      </>
                     ) : (
                       <CardAction url={getPlanUrl('18', advancedPay, promoCode, _)}>
                         {_('change_plan.calculate_price')}
