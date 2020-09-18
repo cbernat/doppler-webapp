@@ -163,6 +163,7 @@ const StandardCard = ({ path, showFeatures, currentPlanType }) => {
 
       {showFeatures ? (
         <CardFeatures>
+          <h4>{_('change_plan.features_title_standard')}</h4>
           <BulletOptions type={'standard'} />
         </CardFeatures>
       ) : null}
@@ -202,6 +203,7 @@ const PlusCard = ({ path, showFeatures, currentPlanType }) => {
 
       {showFeatures ? (
         <CardFeatures>
+          <h4>{_('change_plan.features_title_plus')}</h4>
           <BulletOptions type={'plus'} />
         </CardFeatures>
       ) : null}
