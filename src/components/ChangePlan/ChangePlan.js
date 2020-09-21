@@ -147,14 +147,15 @@ const AgenciesCard = ({ showFeatures }) => {
   );
 };
 
-const StandardCard = ({ path, showFeatures, currentPlanType, promoCode }) => {
+const CardWithPrice = ({ path, showFeatures, currentPlanType, promoCode }) => {
   const intl = useIntl();
   const _ = (id, values) => intl.formatMessage({ id: id }, values);
   return (
-    <Card>
+    <Card highlighted={path.type === 'plus'}>
+      {path.type === 'plus' ? <Ribbon content={_('change_plan.recommended')} /> : ''}
       <div className="dp-content-plans">
-        <h3>{_('change_plan.card_standard_title')}</h3>
-        <p>{_('change_plan.card_standard_description')}</p>
+        <h3>{_(`change_plan.card_${path.type}_title`)}</h3>
+        <p>{_(`change_plan.card_${path.type}_description`)}</p>
       </div>
 
       <CardPrice currency="US$">{path.minimumFee}</CardPrice>
@@ -162,10 +163,10 @@ const StandardCard = ({ path, showFeatures, currentPlanType, promoCode }) => {
       {path.current && !path.deadEnd ? (
         <>
           <Link
-            to={`/plan-selection/standard-subscribers?promo-code=${promoCode}`}
+            to={`/plan-selection/${path.type}-${currentPlanType}?promo-code=${promoCode}`}
             className="dp-button button-medium secondary-green"
           >
-            {_('change_plan.increase_action_' + currentPlanType.replace('-', '_'))}
+            {_(`change_plan.increase_action_${currentPlanType.replace('-', '_')}`)}
           </Link>
           <span className="dp-what-plan">{_('change_plan.current_plan')}</span>
         </>
@@ -175,60 +176,16 @@ const StandardCard = ({ path, showFeatures, currentPlanType, promoCode }) => {
           <span className="dp-what-plan">{_('change_plan.current_plan')}</span>
         </>
       ) : (
-        <CardAction url={`/plan-selection/standard-subscribers?promo-code=${promoCode}`}>
+        // TODO: add action related to path only
+        <CardAction url={`/plan-selection/${path.type}-subscribers?promo-code=${promoCode}`}>
           {_('change_plan.calculate_price')}
         </CardAction>
       )}
 
       {showFeatures ? (
         <CardFeatures>
-          {!path.current ? <h4>{_('change_plan.features_title_standard')}</h4> : ''}
-          <BulletOptions type={'standard'} />
-        </CardFeatures>
-      ) : null}
-    </Card>
-  );
-};
-
-const PlusCard = ({ path, showFeatures, currentPlanType, promoCode }) => {
-  const intl = useIntl();
-  const _ = (id, values) => intl.formatMessage({ id: id }, values);
-  return (
-    <Card highlighted>
-      <Ribbon content={_('change_plan.recommended')} />
-
-      <div className="dp-content-plans">
-        <h3>{_('change_plan.card_plus_title')}</h3>
-        <p>{_('change_plan.card_plus_description')}</p>
-      </div>
-
-      <CardPrice currency="US$">{path.minimumFee}</CardPrice>
-
-      {path.current && !path.deadEnd ? (
-        <>
-          <Link
-            to={`/plan-selection/standard-subscribers?promo-code=${promoCode}`}
-            className="dp-button button-medium secondary-green"
-          >
-            {_('change_plan.increase_action_' + currentPlanType.replace('-', '_'))}
-          </Link>
-          <span className="dp-what-plan">{_('change_plan.current_plan')}</span>
-        </>
-      ) : path.current && path.deadEnd ? (
-        <>
-          <span class="dp-maximum">{_('change_plan.card_generic_maximum_reached')}</span>
-          <span className="dp-what-plan">{_('change_plan.current_plan')}</span>
-        </>
-      ) : (
-        <CardAction url={`/plan-selection/plus-subscribers?promo-code=${promoCode}`}>
-          {_('change_plan.calculate_price')}
-        </CardAction>
-      )}
-
-      {showFeatures ? (
-        <CardFeatures>
-          {!path.current ? <h4>{_('change_plan.features_title_plus')}</h4> : ''}
-          <BulletOptions type={'plus'} />
+          {!path.current ? <h4>{_(`change_plan.features_title_${path.type}`)}</h4> : ''}
+          <BulletOptions type={path.type} />
         </CardFeatures>
       ) : null}
     </Card>
@@ -314,23 +271,15 @@ const ChangePlan = ({ location, dependencies: { planService, appSessionRef } }) 
                       <FreeCard key={index} showFeatures={isFeaturesVisible}></FreeCard>
                     ) : path.type === 'agencies' ? (
                       <AgenciesCard key={index} showFeatures={isFeaturesVisible}></AgenciesCard>
-                    ) : path.type === 'standard' ? (
-                      <StandardCard
-                        key={index}
-                        path={path}
-                        showFeatures={isFeaturesVisible}
-                        currentPlanType={state.currentPlan.type}
-                        promoCode={promoCode}
-                      ></StandardCard>
                     ) : (
-                      <PlusCard
+                      <CardWithPrice
                         key={index}
                         path={path}
                         showFeatures={isFeaturesVisible}
                         currentPlanType={state.currentPlan.type}
                         promoCode={promoCode}
-                      ></PlusCard>
-                    ),
+                      ></CardWithPrice>
+                    )
                   )
                 ) : (
                   <></>
