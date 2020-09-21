@@ -10,37 +10,34 @@ import { Loading } from '../Loading/Loading';
 const BulletOptions = ({ type }) => {
   const intl = useIntl();
   const _ = (id, values) => intl.formatMessage({ id: id }, values);
-  const randomId = () => {
-    return Math.floor(Math.random() * 100 + 1);
-  };
 
   return (
     <FormattedMessage
       id={'change_plan.features_HTML_' + type}
       values={{
         option: (chunks) => (
-          <OptionItem key={type + '-option' + randomId()} bullet={<BasicBullet />}>
+          <OptionItem key={type + '-option' + chunks.substring(1, 4)} bullet={<BasicBullet />}>
             {chunks}
           </OptionItem>
         ),
         star: (chunks) => (
-          <OptionItem key={type + '-star' + randomId()} bullet={<StarBullet />}>
+          <OptionItem key={type + '-star' + chunks.substring(1, 4)} bullet={<StarBullet />}>
             {chunks}
           </OptionItem>
         ),
         newOption: (chunks) => (
-          <OptionItem key={type + '-newoption' + randomId()} bullet={<BasicBullet />}>
+          <OptionItem key={type + '-newoption' + chunks.substring(1, 4)} bullet={<BasicBullet />}>
             {chunks} <NewLabel>{_('change_plan.new_label')}</NewLabel>
           </OptionItem>
         ),
         newStar: (chunks) => (
-          <OptionItem key={type + '-newstar' + randomId()} bullet={<StarBullet />}>
+          <OptionItem key={type + '-newstar' + chunks.substring(1, 4)} bullet={<StarBullet />}>
             {chunks} <NewLabel>{_('change_plan.new_label')}</NewLabel>
           </OptionItem>
         ),
         bigData: (chunks) => (
           <OptionItem
-            key={type + '-bd' + randomId()}
+            key={type + '-bd' + chunks.substring(1, 4)}
             bullet={<BigDataBullet>{_('change_plan.big_data_tooltip')}</BigDataBullet>}
           >
             {chunks}
@@ -48,7 +45,7 @@ const BulletOptions = ({ type }) => {
         ),
         newBigData: (chunks) => (
           <OptionItem
-            key={type + '-newbd' + randomId()}
+            key={type + '-newbd' + chunks.substring(1, 4)}
             bullet={<BigDataBullet>{_('change_plan.big_data_tooltip')}</BigDataBullet>}
           >
             {chunks} <NewLabel>{_('change_plan.new_label')}</NewLabel>
@@ -291,55 +288,55 @@ const ChangePlan = ({ location, dependencies: { planService, appSessionRef } }) 
         <title>Compra un plan</title>
       </Helmet>
       {state.loading ? (
-          <Loading page />
-      ): (
-      <div className="p-t-54 p-b-54" style={{ backgroundColor: '#f6f6f6', flex: '1' }}>
-        <section className="dp-container">
-          <div className="dp-rowflex">
-            <div className="dp-align-center">
-              <h1>{_('change_plan.title')}</h1>
+        <Loading page />
+      ) : (
+        <div className="p-t-54 p-b-54" style={{ backgroundColor: '#f6f6f6', flex: '1' }}>
+          <section className="dp-container">
+            <div className="dp-rowflex">
+              <div className="dp-align-center">
+                <h1>{_('change_plan.title')}</h1>
+              </div>{' '}
             </div>{' '}
-          </div>{' '}
-        </section>
-        <section className="dp-container">
-          <div className="dp-rowflex">
-            <div className="dp-align-center p-t-30 p-b-30">
-              {state.pathList?.length ? (
-                state.pathList.map((path, index) =>
-                  path.type === 'free' ? (
-                    <FreeCard key={index} showFeatures={isFeaturesVisible}></FreeCard>
-                  ) : path.type === 'agencies' ? (
-                    <AgenciesCard key={index} showFeatures={isFeaturesVisible}></AgenciesCard>
-                  ) : path.type === 'standard' ? (
-                    <StandardCard
-                      key={index}
-                      path={path}
-                      showFeatures={isFeaturesVisible}
-                      currentPlanType={state.currentPlan.type}
-                      promoCode={promoCode}
-                    ></StandardCard>
-                  ) : (
-                    <PlusCard
-                      key={index}
-                      path={path}
-                      showFeatures={isFeaturesVisible}
-                      currentPlanType={state.currentPlan.type}
-                      promoCode={promoCode}
-                    ></PlusCard>
-                  ),
-                )
-              ) : (
-                <></>
-              )}
+          </section>
+          <section className="dp-container">
+            <div className="dp-rowflex">
+              <div className="dp-align-center p-t-30 p-b-30">
+                {state.pathList?.length ? (
+                  state.pathList.map((path, index) =>
+                    path.type === 'free' ? (
+                      <FreeCard key={index} showFeatures={isFeaturesVisible}></FreeCard>
+                    ) : path.type === 'agencies' ? (
+                      <AgenciesCard key={index} showFeatures={isFeaturesVisible}></AgenciesCard>
+                    ) : path.type === 'standard' ? (
+                      <StandardCard
+                        key={index}
+                        path={path}
+                        showFeatures={isFeaturesVisible}
+                        currentPlanType={state.currentPlan.type}
+                        promoCode={promoCode}
+                      ></StandardCard>
+                    ) : (
+                      <PlusCard
+                        key={index}
+                        path={path}
+                        showFeatures={isFeaturesVisible}
+                        currentPlanType={state.currentPlan.type}
+                        promoCode={promoCode}
+                      ></PlusCard>
+                    ),
+                  )
+                ) : (
+                  <></>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="p-t-30 p-b-30">
-            <button className="dp-compare-details-plans" onClick={() => toggleFeatures()}>
-              {_('change_plan.compare_features')}
-            </button>
-          </div>
-        </section>
-      </div>
+            <div className="p-t-30 p-b-30">
+              <button className="dp-compare-details-plans" onClick={() => toggleFeatures()}>
+                {_('change_plan.compare_features')}
+              </button>
+            </div>
+          </section>
+        </div>
       )}
     </>
   );
