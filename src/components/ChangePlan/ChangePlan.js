@@ -17,28 +17,40 @@ const BulletOptions = ({ type }) => {
       id={'change_plan.features_HTML_' + type}
       values={{
         option: (chunks) => (
-          <OptionItem key={type + '-option' + chunks.substring(1, 4)} bullet={<BasicBullet />}>
+          <OptionItem
+            key={type + '-option' + chunks.toString().substring(1, 20)}
+            bullet={<BasicBullet />}
+          >
             {chunks}
           </OptionItem>
         ),
         star: (chunks) => (
-          <OptionItem key={type + '-star' + chunks.substring(1, 4)} bullet={<StarBullet />}>
+          <OptionItem
+            key={type + '-star' + chunks.toString().substring(1, 20)}
+            bullet={<StarBullet />}
+          >
             {chunks}
           </OptionItem>
         ),
         newOption: (chunks) => (
-          <OptionItem key={type + '-newoption' + chunks.substring(1, 4)} bullet={<BasicBullet />}>
+          <OptionItem
+            key={type + '-newoption' + chunks.toString().substring(1, 20)}
+            bullet={<BasicBullet />}
+          >
             {chunks} <NewLabel>{_('change_plan.new_label')}</NewLabel>
           </OptionItem>
         ),
         newStar: (chunks) => (
-          <OptionItem key={type + '-newstar' + chunks.substring(1, 4)} bullet={<StarBullet />}>
+          <OptionItem
+            key={type + '-newstar' + chunks.toString().substring(1, 20)}
+            bullet={<StarBullet />}
+          >
             {chunks} <NewLabel>{_('change_plan.new_label')}</NewLabel>
           </OptionItem>
         ),
         bigData: (chunks) => (
           <OptionItem
-            key={type + '-bd' + chunks.substring(1, 4)}
+            key={type + '-bd' + chunks.toString().substring(1, 20)}
             bullet={<BigDataBullet>{_('change_plan.big_data_tooltip')}</BigDataBullet>}
           >
             {chunks}
@@ -46,7 +58,7 @@ const BulletOptions = ({ type }) => {
         ),
         newBigData: (chunks) => (
           <OptionItem
-            key={type + '-newbd' + chunks.substring(1, 4)}
+            key={type + '-newbd' + chunks.toString().substring(1, 20)}
             bullet={<BigDataBullet>{_('change_plan.big_data_tooltip')}</BigDataBullet>}
           >
             {chunks} <NewLabel>{_('change_plan.new_label')}</NewLabel>
@@ -279,7 +291,7 @@ const ChangePlan = ({ location, dependencies: { planService, appSessionRef } }) 
                         currentPlanType={state.currentPlan.type}
                         promoCode={promoCode}
                       ></CardWithPrice>
-                    )
+                    ),
                   )
                 ) : (
                   <></>
