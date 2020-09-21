@@ -6,6 +6,7 @@ import queryString from 'query-string';
 import { extractParameter } from '../../utils';
 import { InjectAppServices } from '../../services/pure-di';
 import { Loading } from '../Loading/Loading';
+import { Link } from 'react-router-dom';
 
 const BulletOptions = ({ type }) => {
   const intl = useIntl();
@@ -160,9 +161,12 @@ const StandardCard = ({ path, showFeatures, currentPlanType, promoCode }) => {
 
       {path.current && !path.deadEnd ? (
         <>
-          <button type="button" className="dp-button button-medium secondary-green">
+          <Link
+            to={`/plan-selection/standard-subscribers?promo-code=${promoCode}`}
+            className="dp-button button-medium secondary-green"
+          >
             {_('change_plan.increase_action_' + currentPlanType.replace('-', '_'))}
-          </button>
+          </Link>
           <span className="dp-what-plan">{_('change_plan.current_plan')}</span>
         </>
       ) : path.current && path.deadEnd ? (
@@ -202,9 +206,12 @@ const PlusCard = ({ path, showFeatures, currentPlanType, promoCode }) => {
 
       {path.current && !path.deadEnd ? (
         <>
-          <button type="button" className="dp-button button-medium secondary-green">
+          <Link
+            to={`/plan-selection/standard-subscribers?promo-code=${promoCode}`}
+            className="dp-button button-medium secondary-green"
+          >
             {_('change_plan.increase_action_' + currentPlanType.replace('-', '_'))}
-          </button>
+          </Link>
           <span className="dp-what-plan">{_('change_plan.current_plan')}</span>
         </>
       ) : path.current && path.deadEnd ? (
