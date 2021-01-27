@@ -132,14 +132,18 @@ const Signup = function ({ location, dependencies: { dopplerLegacyClient, origin
       } else if (result.expectedError && result.expectedError.emailAlreadyExists) {
         addExistentEmailAddress(values[fieldNames.email]);
         validateForm();
+        setSubmitting(false);
       } else if (result.expectedError && result.expectedError.blockedDomain) {
         const domain = extractDomain(values[fieldNames.email]);
         addBlockedDomain(domain);
         validateForm();
+        setSubmitting(false);
       } else if (result.expectedError && result.expectedError.registerDenied) {
         setErrors({ _error: 'validation_messages.error_register_denied' });
+        setSubmitting(false);
       } else if (result.expectedError && result.expectedError.invalidDomain) {
         setErrors({ _error: 'validation_messages.error_invalid_domain' });
+        setSubmitting(false);
       } else {
         console.log('Unexpected error', result);
         setErrors({
@@ -150,10 +154,9 @@ const Signup = function ({ location, dependencies: { dopplerLegacyClient, origin
             />
           ),
         });
+        setSubmitting(false);
       }
-    } finally {
-      setSubmitting(false);
-    }
+    }finally {}
   };
 
   return (
