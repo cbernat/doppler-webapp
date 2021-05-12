@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { useIntl } from 'react-intl';
@@ -105,12 +105,27 @@ const Signup = function ({
   const [alreadyExistentAddresses, setAlreadyExistentAddresses] = useState([]);
   const [blockedDomains, setBlockedDomains] = useState([]);
 
-  const utmSource = getSource(location);
-  const utmCampaign = getParameter(location, 'utm_campaign');
-  const utmMedium = getParameter(location, 'utm_medium');
-  const utmTerm = getParameter(location, 'utm_term');
+  const [utmParams, setUtmParams] = useState({
+    utmSource: '',
+    utmCampaign: '',
+    utmMedium: '',
+    utmTerm: '',
+    utmCookies: [],
+  });
 
-  const utmCookies = manageUtmCookies(localStorage, utmSource, utmCampaign, utmMedium, utmTerm);
+  useEffect(() => {
+    const utmSource = getSource(location);
+    const utmCampaign = getParameter(location, 'utm_campaign');
+    const utmMedium = getParameter(location, 'utm_medium');
+    const utmTerm = getParameter(location, 'utm_term');
+    setUtmParams({
+      utmSource: utmSource,
+      utmCampaign: utmCampaign,
+      utmMedium: utmMedium,
+      utmTerm: utmTerm,
+      utmCookies: manageUtmCookies(localStorage, utmSource, utmCampaign, utmMedium, utmTerm),
+    });
+  }, []);
 
   const addExistentEmailAddress = (email) => {
     setAlreadyExistentAddresses((x) => [...x, email]);
@@ -168,10 +183,10 @@ const Signup = function ({
       firstOrigin: originResolver.getFirstOrigin(),
       origin: originResolver.getCurrentOrigin(),
       redirect: !!redirectUrl && isWhitelisted(redirectUrl) ? redirectUrl : '',
-      utm_source: utmSource,
-      utm_campaign: utmCampaign,
-      utm_medium: utmMedium,
-      utm_term: utmTerm,
+      utm_source: utmParams.utmSource,
+      utm_campaign: utmParams.utmCampaign,
+      utm_medium: utmParams.utmMedium,
+      utm_term: utmParams.utmTerm,
       utm_cookies: utmCookies.slice(-10),
     });
     if (result.success) {
