@@ -114,17 +114,21 @@ const Signup = function ({
   });
 
   useEffect(() => {
-    const utmSource = getSource(location);
-    const utmCampaign = getParameter(location, 'utm_campaign');
-    const utmMedium = getParameter(location, 'utm_medium');
-    const utmTerm = getParameter(location, 'utm_term');
-    setUtmParams({
-      utmSource: utmSource,
-      utmCampaign: utmCampaign,
-      utmMedium: utmMedium,
-      utmTerm: utmTerm,
-      utmCookies: manageUtmCookies(localStorage, utmSource, utmCampaign, utmMedium, utmTerm),
-    });
+    if (localStorage.getItem('utm_cookie_registered') === 'false') {
+      const utmSource = getSource(location);
+      const utmCampaign = getParameter(location, 'utm_campaign');
+      const utmMedium = getParameter(location, 'utm_medium');
+      const utmTerm = getParameter(location, 'utm_term');
+      setUtmParams({
+        utmSource: utmSource,
+        utmCampaign: utmCampaign,
+        utmMedium: utmMedium,
+        utmTerm: utmTerm,
+        utmCookies: manageUtmCookies(localStorage, utmSource, utmCampaign, utmMedium, utmTerm),
+      });
+      console.log(JSON.stringify(localStorage.getItem('UtmCookies')));
+      localStorage.setItem('utm_cookie_registered', 'true');
+    }
   }, []);
 
   const addExistentEmailAddress = (email) => {
