@@ -648,7 +648,6 @@ describe('App component', () => {
         localStorage: createLocalStorageDouble(),
         dopplerSitesClient: dopplerSitesClientDouble,
       };
-      dependencies.localStorage.setItem('utm_cookie_registered', 'false');
       createJsonParse();
 
       // Act
@@ -682,7 +681,6 @@ describe('App component', () => {
         localStorage: createLocalStorageDouble(),
         dopplerSitesClient: dopplerSitesClientDouble,
       };
-      dependencies.localStorage.setItem('utm_cookie_registered', 'false');
       createJsonParse();
 
       // Act
@@ -728,7 +726,6 @@ describe('App component', () => {
         UTMTerm: 'utmterm1',
       };
       dependencies.localStorage.setItem('UtmCookies', JSON.stringify(utmCookie));
-      dependencies.localStorage.setItem('utm_cookie_registered', 'false');
       createJsonParse(utmCookie);
       // Act
       act(() => {
@@ -759,56 +756,6 @@ describe('App component', () => {
         expect(utmCookiesObject[1].UTMMedium).toEqual('testmedium');
         expect(utmCookiesObject[1].UTMSource).toEqual('test');
         expect(utmCookiesObject.length).toBeGreaterThan(1);
-      });
-    });
-
-    it('should not accumulate utm parameters if it the registered flag is set to true', async () => {
-      // Arrange
-      const dependencies = {
-        sessionManager: createDoubleSessionManager(),
-        localStorage: createLocalStorageDouble(),
-        dopplerSitesClient: dopplerSitesClientDouble,
-      };
-
-      const utmCookie = [
-        {
-          date: new Date().toISOString(),
-          UTMSource: 'utmsource1',
-          UTMCampaign: 'utmcampaign1',
-          UTMMedium: 'utmmedium1',
-          UTMTerm: 'utmterm1',
-        },
-      ];
-      dependencies.localStorage.setItem('UtmCookies', JSON.stringify(utmCookie));
-      dependencies.localStorage.setItem('utm_cookie_registered', 'true');
-      createJsonParse(utmCookie);
-      // Act
-      act(() => {
-        render(
-          <AppServicesProvider forcedServices={dependencies}>
-            <Router
-              initialEntries={[
-                '/signup?origin=testOrigin&utm_source=test&utm_campaign=testcampaign&utm_medium=testmedium&utm_term=testterm',
-              ]}
-            >
-              <App locale="en" />
-            </Router>
-          </AppServicesProvider>,
-        );
-      });
-
-      // Assert
-
-      const localStorageItems = dependencies.localStorage.getAllItems();
-
-      const utmCookiesObject = parse(localStorageItems['UtmCookies']);
-      await waitFor(() => {
-        expect(localStorageItems['UtmCookies']).toBeDefined();
-        expect(utmCookiesObject[0].UTMTerm).toEqual('utmterm1');
-        expect(utmCookiesObject[0].UTMCampaign).toEqual('utmcampaign1');
-        expect(utmCookiesObject[0].UTMMedium).toEqual('utmmedium1');
-        expect(utmCookiesObject[0].UTMSource).toEqual('utmsource1');
-        expect(utmCookiesObject.length).toBe(1);
       });
     });
 

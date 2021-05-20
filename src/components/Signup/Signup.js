@@ -96,7 +96,7 @@ const getFormInitialValues = () =>
  */
 const Signup = function ({
   location,
-  dependencies: { dopplerLegacyClient, originResolver, localStorage },
+  dependencies: { dopplerLegacyClient, originResolver, localStorage, utmCookiesManager },
 }) {
   const intl = useIntl();
   const _ = (id, values) => intl.formatMessage({ id: id }, values);
@@ -114,21 +114,17 @@ const Signup = function ({
   });
 
   useEffect(() => {
-    if (localStorage.getItem('utm_cookie_registered') === 'false') {
-      const utmSource = getSource(location);
-      const utmCampaign = getParameter(location, 'utm_campaign');
-      const utmMedium = getParameter(location, 'utm_medium');
-      const utmTerm = getParameter(location, 'utm_term');
-      setUtmParams({
-        utmSource: utmSource,
-        utmCampaign: utmCampaign,
-        utmMedium: utmMedium,
-        utmTerm: utmTerm,
-        utmCookies: manageUtmCookies(localStorage, utmSource, utmCampaign, utmMedium, utmTerm),
-      });
-      console.log(JSON.stringify(localStorage.getItem('UtmCookies')));
-      localStorage.setItem('utm_cookie_registered', 'true');
-    }
+    const utmSource = getSource(location);
+    const utmCampaign = getParameter(location, 'utm_campaign');
+    const utmMedium = getParameter(location, 'utm_medium');
+    const utmTerm = getParameter(location, 'utm_term');
+    setUtmParams({
+      utmSource: utmSource,
+      utmCampaign: utmCampaign,
+      utmMedium: utmMedium,
+      utmTerm: utmTerm,
+      utmCookies: utmCookiesManager.setCookieEntry(localStorage, location, document.referrer),
+    });
   }, []);
 
   const addExistentEmailAddress = (email) => {
@@ -191,7 +187,7 @@ const Signup = function ({
       utm_campaign: utmParams.utmCampaign,
       utm_medium: utmParams.utmMedium,
       utm_term: utmParams.utmTerm,
-      utm_cookies: utmCookies.slice(-10),
+      utm_cookies: utmParams.utmCookies,
     });
     if (result.success) {
       setRegisteredUser(values[fieldNames.email]);

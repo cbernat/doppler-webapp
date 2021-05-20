@@ -29,9 +29,6 @@ if (document.querySelector('body').setActive) {
 
 const locale = availableLanguageOrDefault(navigator.language.toLowerCase().split(/[_-]+/)[0]);
 
-// Signal if utm cookie for signup has accumulated in this instance
-localStorage.setItem('utm_cookie_registered', 'false');
-
 // Only used in development and demo environments, it does not affect production build
 const forcedServices =
   process.env.NODE_ENV === 'development' || process.env.REACT_APP_IS_DEMO_ENABLED
